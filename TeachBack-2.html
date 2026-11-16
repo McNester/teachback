@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TeachBack</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Onest:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Layout: one centred column, one thing per screen (Learn, Teach, Result). Flat, no shadows, a single blue accent. */
+  --bg:#fafafa; --surface:#ffffff; --soft:#f0f1f3; --ink:#111214; --muted:#666a71; --line:#e3e4e8;
+  --accent:#2f5bea; --accent-ink:#ffffff; --warn:#b3261e;
+  --display:"Instrument Serif",Georgia,"Times New Roman",serif;
+  --body:"Onest",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){ color-scheme:dark;
+    --bg:#0d0e10; --surface:#15171a; --soft:#1d2024; --ink:#ededef; --muted:#9a9da4; --line:#282b30;
+    --accent:#86a8ff; --accent-ink:#0a1024; --warn:#ff8f85; }
+}
+:root[data-theme="dark"]{ color-scheme:dark;
+  --bg:#0d0e10; --surface:#15171a; --soft:#1d2024; --ink:#ededef; --muted:#9a9da4; --line:#282b30;
+  --accent:#86a8ff; --accent-ink:#0a1024; --warn:#ff8f85; }
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 var(--body);-webkit-font-smoothing:antialiased}
+button,input,textarea,select{font:inherit;color:inherit}
+[hidden]{display:none!important}
+.wrap{max-width:760px;margin:0 auto;padding:18px 18px 56px}
+.wrap.wide{max-width:980px}
+h1,h2{font-family:var(--display);font-weight:400;margin:0;text-wrap:balance;letter-spacing:-.01em}
+h1{font-size:46px;line-height:1.05}
+h2{font-size:30px;line-height:1.15}
+p{margin:0}
+.muted{color:var(--muted)} .small{font-size:14px}
+.label{font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:500}
+.ai{font-size:11px;letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--line);border-radius:5px;padding:1px 6px;color:var(--muted);white-space:nowrap}
+.stack{display:flex;flex-direction:column;gap:14px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.grow{flex:1;min-width:0}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.top{display:flex;align-items:center;gap:14px;margin-bottom:34px}
+.brand{font-family:var(--display);font-size:24px;border:0;background:none;cursor:pointer;padding:0}
+.top .sp{margin-left:auto}
+.link{border:0;background:none;padding:0;cursor:pointer;color:var(--muted);text-decoration:underline;text-underline-offset:3px}
+.link:hover{color:var(--ink)}
+.dot{font-size:13px;color:var(--muted);display:inline-flex;align-items:center;gap:6px}
+.dot i{width:7px;height:7px;border-radius:50%;background:var(--muted)}
+.dot.live i{background:var(--accent)}
+
+.btn{border:1px solid var(--line);background:var(--surface);padding:10px 18px;border-radius:999px;cursor:pointer;font-weight:500}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.big{padding:13px 24px;font-size:17px}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+input[type=text],textarea,select{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px;width:100%}
+textarea{resize:vertical}
+.view{display:none}.view.on{display:block}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px}
+hr{border:0;border-top:1px solid var(--line);margin:6px 0}
+
+/* home */
+.topiclist{border-top:1px solid var(--line)}
+.topic{display:flex;align-items:baseline;gap:12px;width:100%;text-align:left;border:0;border-bottom:1px solid var(--line);background:none;padding:14px 2px;cursor:pointer}
+.topic:hover b{color:var(--accent)}
+.topic b{font-weight:500;font-size:18px}
+.topic span{color:var(--muted);font-size:14px;margin-left:auto;text-align:right}
+.topic:disabled{opacity:.45;cursor:not-allowed}
+details summary{cursor:pointer;color:var(--muted)}
+details[open] summary{margin-bottom:10px}
+ul.plain{margin:4px 0 0;padding-left:18px}
+ul.plain li{margin:3px 0}
+
+/* steps */
+.steps{display:flex;gap:8px;align-items:center;font-size:14px;color:var(--muted);margin-bottom:18px}
+.steps b{font-weight:500}
+.steps .cur{color:var(--ink)}
+.steps i{width:22px;height:1px;background:var(--line)}
+.material p{margin:0 0 12px;font-size:17px;line-height:1.6}
+.material p:last-child{margin:0}
+.scale{display:flex;gap:6px;flex-wrap:wrap}
+.scale button{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--surface);cursor:pointer}
+.scale button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+
+/* teach */
+.stagebar{display:flex;gap:6px;margin-bottom:10px}
+.stagebar span{flex:1;height:4px;border-radius:4px;background:var(--line)}
+.stagebar span.done,.stagebar span.cur{background:var(--accent)}
+.stagebar span.done{opacity:.45}
+.chat{display:flex;flex-direction:column;height:min(58vh,540px);min-height:340px;padding:0;overflow:hidden}
+.msgs{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:10px}
+.msg{max-width:84%;padding:10px 14px;border-radius:16px;white-space:pre-wrap;overflow-wrap:anywhere}
+.msg.nova{background:var(--soft);border-bottom-left-radius:4px;align-self:flex-start}
+.msg.me{background:var(--accent);color:var(--accent-ink);border-bottom-right-radius:4px;align-self:flex-end}
+.msg.sys{align-self:center;background:none;color:var(--muted);font-size:13px;text-align:center;padding:4px;max-width:94%}
+.msg .who{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
+.msg .pf{display:block;font-size:11px;opacity:.8;margin-top:4px}
+.composer{border-top:1px solid var(--line);padding:12px;display:flex;gap:8px;align-items:flex-end}
+.composer textarea{min-height:44px;max-height:150px;border-radius:22px;padding:10px 16px}
+.round{width:44px;height:44px;flex:none;border-radius:50%;border:1px solid var(--line);background:var(--surface);cursor:pointer;display:grid;place-items:center}
+.round.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.round.send{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.round:disabled{opacity:.4}
+.demobar{border-top:1px solid var(--line);padding:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.tip{border-left:2px solid var(--accent);padding:2px 0 2px 12px;font-size:15px}
+.spin{display:inline-block;width:13px;height:13px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:s .8s linear infinite;vertical-align:-2px}
+@keyframes s{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion: reduce){.spin{animation:none}}
+
+/* result + review */
+.stagerow{display:grid;grid-template-columns:120px 1fr auto;gap:6px 16px;padding:12px 0;border-bottom:1px solid var(--line);align-items:start}
+.stagerow:last-child{border-bottom:0}
+.stagerow .lv{white-space:nowrap;font-weight:500}
+.stagerow .err{color:var(--warn);font-size:14px;margin-top:3px}
+.stagerow select{width:auto;padding:6px 10px;border-radius:999px}
+@media (max-width:620px){.stagerow{grid-template-columns:1fr}}
+.keys div{padding:5px 0;display:flex;gap:10px}
+.keys .no{color:var(--muted)}
+.score{font-family:var(--display);font-size:54px;line-height:1}
+.transcript{font-size:14px;max-height:340px;overflow:auto;background:var(--soft);border-radius:12px;padding:14px;white-space:pre-wrap}
+.sub{display:flex;gap:10px;align-items:baseline;width:100%;text-align:left;border:0;border-bottom:1px solid var(--line);background:none;padding:10px 2px;cursor:pointer}
+.sub[aria-current="true"] b{color:var(--accent)}
+.sub span{margin-left:auto;color:var(--muted);font-size:13px}
+label.f{display:block;font-size:13px;color:var(--muted);margin-bottom:5px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:640px){.two{grid-template-columns:1fr} h1{font-size:36px}}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+</style>
+</head>
+<body>
+<div class="wrap" id="wrap">
+  <header class="top">
+    <button class="brand" id="brand">TeachBack</button>
+    <span id="aiStatus" class="dot sp" role="status"><i></i><span>Connecting…</span></span>
+    <button class="link small" id="roleBtn">Teacher view</button>
+  </header>
+
+  <!-- HOME -->
+  <section id="v-home" class="view on">
+    <div class="stack" style="gap:26px">
+      <div class="stack">
+        <h1>Teach it to show you understand it.</h1>
+        <p class="muted" style="font-size:18px;max-width:600px">Read the material. Then explain it to Nova, a student who knows nothing about it and keeps asking. Your teacher reads what you said and decides the score.</p>
+      </div>
+      <div class="row">
+        <button class="btn primary big" id="demoGo">Watch the demo</button>
+        <span class="small muted">A full walkthrough, scripted in advance. No live AI needed.</span>
+      </div>
+      <div>
+        <div class="label" style="margin-bottom:8px">Or start a live session</div>
+        <div class="topiclist" id="topicList"></div>
+        <p class="small muted" id="noAI" hidden style="margin-top:10px">Live AI is not available in this view, so only the demo runs here.</p>
+      </div>
+      <details class="small">
+        <summary>How it works, and what is real in this prototype</summary>
+        <ul class="plain">
+          <li><b>You</b> do all the explaining. Nova never gives answers.</li>
+          <li><b>AI</b> plays Nova and afterwards collects quotes from what you said, with a suggested level. Everything it writes is marked <span class="ai">AI</span>.</li>
+          <li><b>Your teacher</b> sets the key ideas beforehand, reads the conversation and decides the score. You can add a note or ask for a live oral instead.</li>
+          <li><b>Works now:</b> live conversation in five stages, evidence notes, teacher review and approval, topic setup, voice input and read-aloud where the browser allows. Kazakh, Russian or English.</li>
+          <li><b>Not built yet:</b> accounts, Moodle link, central storage (records stay in this browser), group analytics.</li>
+        </ul>
+      </details>
+    </div>
+  </section>
+
+  <!-- LEARN -->
+  <section id="v-learn" class="view">
+    <div class="steps"><b class="cur">1 Learn</b><i></i><b>2 Teach</b><i></i><b>3 Result</b></div>
+    <div class="stack" style="gap:20px">
+      <div><div class="label" id="lCourse"></div><h2 id="lTitle"></h2></div>
+      <div class="panel material" id="lMaterial"></div>
+      <div class="stack" style="gap:8px">
+        <span class="small muted">How well could you explain this to a beginner right now? (1 not at all, 5 fully)</span>
+        <div class="scale" id="preScale"></div>
+      </div>
+      <div class="row">
+        <button class="btn primary big" id="startBtn">I'm ready to teach it</button>
+        <button class="link small" id="practiceBtn">Practise first: tips on, not sent to the teacher</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- TEACH -->
+  <section id="v-teach" class="view">
+    <div class="steps"><b>1 Learn</b><i></i><b class="cur">2 Teach</b><i></i><b>3 Result</b><span class="sp" style="margin-left:auto"></span><button class="link small" id="quitBtn">Leave</button></div>
+    <div class="stagebar" id="stageBar"></div>
+    <div class="row" style="margin-bottom:12px;align-items:baseline">
+      <b id="stageName" style="font-weight:500"></b><span class="muted grow" id="stageGoal"></span>
+    </div>
+    <div class="panel chat">
+      <div class="msgs" id="msgs" aria-live="polite"></div>
+      <form class="composer" id="composer">
+        <button type="button" class="round" id="micBtn" title="Speak instead of typing" hidden>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg><span class="sr">Speak</span>
+        </button>
+        <label for="inp" class="sr">Your explanation</label>
+        <textarea id="inp" rows="1" placeholder="Explain it to Nova…"></textarea>
+        <button class="round send" id="sendBtn" title="Send"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg><span class="sr">Send</span></button>
+      </form>
+      <div class="demobar" id="demoBar" hidden>
+        <button class="btn primary" id="demoPlay">Play</button>
+        <button class="btn" id="demoNext">Next message</button>
+        <button class="link small" id="demoEnd">Skip to the result</button>
+        <span class="small muted" style="margin-left:auto">Demo · scripted, not live AI</span>
+      </div>
+    </div>
+    <div class="row" style="margin-top:14px;align-items:flex-start">
+      <div class="grow"><div class="tip" id="tip" hidden></div></div>
+      <button class="link small" id="ttsBtn" hidden aria-pressed="false">Read Nova aloud: off</button>
+      <button class="btn" id="nextBtn"></button>
+    </div>
+  </section>
+
+  <!-- RESULT -->
+  <section id="v-result" class="view">
+    <div class="steps"><b>1 Learn</b><i></i><b>2 Teach</b><i></i><b class="cur">3 Result</b></div>
+    <div id="resultBox" class="stack" style="gap:20px"></div>
+  </section>
+
+  <!-- TEACHER -->
+  <section id="v-teacher" class="view">
+    <div class="row" style="margin-bottom:18px">
+      <h2 class="grow">Teacher</h2>
+      <button class="link small" id="tabReview">Review</button>
+      <button class="link small" id="tabTopics">Topics</button>
+    </div>
+    <div id="reviewPane" class="stack" style="gap:20px"><div id="subList"></div><div id="reviewBox" class="stack" style="gap:20px"></div></div>
+    <div id="topicsPane" class="stack" hidden>
+      <p class="muted">You decide what counts as understanding. Students read the material; they never see the key ideas. Nova starts out believing the misconceptions.</p>
+      <div><label class="f" for="setSel">Topic</label><select id="setSel"></select></div>
+      <div class="two">
+        <div><label class="f" for="setTitle">Title</label><input type="text" id="setTitle"></div>
+        <div><label class="f" for="setCourse">Course</label><input type="text" id="setCourse"></div>
+      </div>
+      <div><label class="f" for="setMat">Material students read first, one paragraph per line</label><textarea id="setMat" rows="5"></textarea></div>
+      <div class="two">
+        <div><label class="f" for="setKeys">Key ideas, one per line</label><textarea id="setKeys" rows="6"></textarea></div>
+        <div><label class="f" for="setMis">Nova's misconceptions, one per line</label><textarea id="setMis" rows="6"></textarea></div>
+      </div>
+      <div><label class="f" for="setScen">Case for the Apply stage</label><input type="text" id="setScen"></div>
+      <div class="row"><button class="btn primary" id="saveTopic">Save</button><button class="btn" id="newTopic">New topic</button><span class="small muted" id="saveMsg"></span></div>
+      <p class="small muted">Saved in this browser only. No login in this prototype, so anyone can open the teacher view.</p>
+    </div>
+  </section>
+</div>
+
+<script>
+(() => {
+"use strict";
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function load(k){ try{ return JSON.parse(localStorage.getItem(k)); }catch(e){ return null; } }
+function save(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+
+/* ---------- data ---------- */
+const DEFAULT_TOPICS = [
+  {id:"bsearch", title:"Binary search", course:"Algorithms & Data Structures",
+   mat:["Binary search finds an item in a sorted list by cutting the search range in half again and again.","Look at the middle item. If it is the one you want, stop. If your target is smaller, keep only the left half; if it is larger, keep only the right half. Repeat until you find it or nothing is left.","Each step halves what remains, so a list of n items needs about log2(n) steps. One million items take about 20 steps instead of up to one million.","It only works when the list is sorted. In an unsorted list the middle item tells you nothing about where the target is."],
+   keys:["Works only on a sorted collection","Compare the target with the middle element","Discard the half that cannot contain the target","Repeat until found or the range is empty","Takes about log2(n) steps, much faster than checking one by one"],
+   mis:["Binary search works on any list, sorted or not","It is fast because it checks every second element"],
+   scen:"A phone book app has 1,000,000 sorted names. How would binary search find 'Nurlan'? How many steps at most?"},
+  {id:"recursion", title:"Recursion", course:"Programming Fundamentals",
+   mat:["A recursive function solves a problem by calling itself on a smaller version of the same problem.","Every recursive function needs a base case: an input so small that the answer is known without another call. Without it the calls never stop.","Each call must move closer to the base case. factorial(4) calls factorial(3), then factorial(2), then factorial(1), which is the base case.","Calls wait on the call stack. The inner call finishes first, and its result is handed back to the call that was waiting."],
+   keys:["A function that calls itself on a smaller version of the problem","A base case stops the recursion","Each call must move closer to the base case","Calls wait on the call stack until inner calls return"],
+   mis:["A function calling itself always runs forever","The base case is optional if the input is small"],
+   scen:"Use recursion to compute the factorial of 4. Walk through every call."},
+  {id:"supply", title:"Supply and demand", course:"Introduction to Economics",
+   mat:["When the price of a good rises, buyers want less of it: the demand curve slopes down.","When the price rises, sellers offer more of it: the supply curve slopes up.","Equilibrium is the price at which the quantity buyers want equals the quantity sellers offer.","A change in the good's own price moves you along a curve. A change in anything else, such as income, weather or costs, shifts the whole curve and creates a new equilibrium."],
+   keys:["Demand falls as price rises (downward-sloping demand)","Supply rises as price rises (upward-sloping supply)","Equilibrium is where quantity supplied equals quantity demanded","A change in price moves along a curve; other factors shift the curve"],
+   mis:["When the price of a good rises, the whole demand curve shifts left","Equilibrium means the price never changes"],
+   scen:"A drought cuts the wheat harvest in Kazakhstan. What happens to bread prices and why?"},
+  {id:"spacing", title:"Spaced repetition", course:"Learning how to learn",
+   mat:["Without review we forget most new material within days: the forgetting curve.","Each review slows forgetting. Reviews work best at growing intervals, for example after 1 day, 3 days, 1 week, 2 weeks.","Recalling the material from memory strengthens it far more than reading it again.","Spreading study over time beats cramming for anything you need to remember long after the exam."],
+   keys:["We forget quickly without review (forgetting curve)","Reviewing at increasing intervals slows forgetting","Actively recalling beats re-reading","Spacing beats cramming for long-term memory"],
+   mis:["Re-reading notes many times is just as good as testing yourself","Cramming the night before works equally well long term"],
+   scen:"You have a final exam in 3 weeks. Design a study plan using spaced repetition."}
+];
+const STAGES = [
+  {name:"Explain", bloom:"Understand", goal:"Explain it in plain words, with an everyday example.",
+   nova:"Ask the learner to explain the topic in simple words. When they use any technical word, say you don't know it and ask what it means. Ask for an everyday example."},
+  {name:"Apply", bloom:"Apply", goal:"Walk Nova through a real case, step by step.",
+   nova:"Give the learner this concrete case and ask them to walk you through solving it step by step: {SCEN}. Ask 'and then what?' if steps are missing."},
+  {name:"Analyze", bloom:"Analyze", goal:"Nova believes something wrong. Find it and explain why.",
+   nova:"Confidently state this misconception as your own belief and ask if you got it right: \"{MIS}\". Only change your mind if the learner explains WHY it is wrong, not just that it is wrong."},
+  {name:"Evaluate", bloom:"Evaluate", goal:"Judge between two claims and say how you can tell.",
+   nova:"Tell the learner that your friend made a different claim about the topic (invent a plausible but partly flawed claim, or a comparison between two approaches) and ask who is right and how they can tell. Push for criteria."},
+  {name:"Create", bloom:"Create", goal:"Invent your own example, then check Nova's attempt at it.",
+   nova:"Ask the learner to make up their own new example, problem or analogy about the topic. When they do, try to solve or use it yourself as a beginner (make one small, realistic mistake) and ask if you got it right."}
+];
+const LEVEL = ["Not shown","Beginning","Developing","Secure","Strong"];
+const LEVEL_DESC = [
+  "Nothing relevant, or the stage was skipped",
+  "Mostly inaccurate, or repeats terms without explaining them",
+  "Partly correct; an important gap or an error left uncorrected",
+  "Correct and clear enough for a beginner; small gaps",
+  "Correct and complete, in the learner's own words, and holds up under Nova's questions"
+];
+
+/* demo: written in advance by the team, never generated live */
+const EX = {pre:4, post:3, steps:[
+ {s:0,w:"nova",t:"Hi! I keep hearing about binary search but I have no idea what it is. Can you explain it like I'm completely new?"},
+ {s:0,w:"me",t:"It is an algorithm that finds an element in a sorted array in logarithmic time."},
+ {s:0,w:"nova",t:"Sorry, you lost me. What does \"sorted\" mean here, and what is \"logarithmic time\"? Can you show me with something from everyday life?"},
+ {s:0,w:"me",t:"Think of a paper dictionary. The words are in alphabetical order, that is what sorted means. To find \"river\" you open it in the middle. If you land on M, you know \"river\" comes later, so you ignore the whole first half. Then you open the middle of what is left and again drop the half where the word cannot be. Each time the pile is two times smaller, so you find the word very quickly.",
+  coach:{score:3,covered:{0:"The words are in alphabetical order, that is what sorted means",1:"you open it in the middle",2:"drop the half where the word cannot be"},errors:[],
+   evidence:"Began with jargon, then explained it with a dictionary: “open it in the middle … drop the half where the word cannot be”.",tip:"Say what happens when the word is not in the dictionary at all."}},
+ {s:0,w:"nova",t:"Oh, that makes sense. So I never read every page, I just keep cutting it in half?"},
+ {s:1,w:"nova",t:"Let me test it. A phone book app has 1,000,000 names in order. How would it find \"Nurlan\", and how many steps at most?"},
+ {s:1,w:"me",t:"It looks at the name in the middle, number 500,000. If Nurlan comes after it, it keeps only the second half and repeats. I think it needs at most 10 steps."},
+ {s:1,w:"nova",t:"Hmm. If I halve a million ten times, aren't there still about a thousand names left? What happens then?"},
+ {s:1,w:"me",t:"You are right, I was wrong. 2 to the power 10 is only about a thousand. You have to halve until one name is left, and 2 to the power 20 is about a million, so at most about 20 steps. If that last name is not Nurlan, he is not in the book.",
+  coach:{score:3,covered:{3:"If that last name is not Nurlan, he is not in the book",4:"2 to the power 20 is about a million, so at most about 20 steps"},errors:["First answered 10 steps for 1,000,000 names; corrected to about 20 after Nova's question"],
+   evidence:"Walked through the case and corrected the step count: “2 to the power 20 is about a million, so at most about 20 steps”.",tip:"Check your estimate with a small case first, for example 8 names."}},
+ {s:2,w:"nova",t:"I think I've got it! So binary search works on any list, even if the names are all mixed up, right?"},
+ {s:2,w:"me",t:"No. If the names are mixed up, looking at the middle tells you nothing. In a sorted book, when the middle name is before Nurlan, I know for sure everything before it is also before Nurlan. In a mixed list Nurlan could be anywhere, so I cannot drop any half. I would have to sort it first or check one by one.",
+  coach:{score:4,covered:{},errors:[],evidence:"Explained why, not only that: “In a mixed list Nurlan could be anywhere, so I cannot drop any half.”",tip:"Now compare the cost of sorting first with just checking one by one."}},
+ {s:2,w:"nova",t:"Ahh. So throwing half away only works because the order tells me which side to keep. I take it back."},
+ {s:3,w:"nova",t:"My friend Dana says binary search is always better than checking one by one. Is she right? How can I tell?"},
+ {s:3,w:"me",t:"Not always. I would look at three things: is the list sorted, how big is it, and how often do I search. For 5 names, checking one by one is just as fast. If the list is not sorted and I search only once, sorting first costs more than just checking each name. For a big sorted list that I search many times, binary search wins by far.",
+  coach:{score:4,covered:{},errors:[],evidence:"Gave three criteria and applied them: “is the list sorted, how big is it, and how often do I search”.",tip:"Name one real system where each choice is the right one."}},
+ {s:3,w:"nova",t:"So it depends on size, order and how often I search. Dana was only right about the big sorted case."},
+ {s:4,w:"nova",t:"Can you make up your own example or game, so I can try it myself?"},
+ {s:4,w:"me",t:"A game: I think of a number from 1 to 100. After each guess I say higher or lower. Find it in as few guesses as you can."},
+ {s:4,w:"nova",t:"Let me try. I guess 50. You say higher. Then I guess 60. Higher again, so 70… Did I do it right?"},
+ {s:4,w:"me",t:"Almost. Your first guess was right, but after \"higher\" the numbers left are 51 to 100, and the middle is 75, not 60. Going up by ten can take many more guesses. Always pick the middle of what is left, then 7 guesses are always enough.",
+  coach:{score:4,covered:{},errors:[],evidence:"Invented a guessing game and caught Nova's mistake: “the middle is 75, not 60”.",tip:"Explain why 7 guesses are enough for 100 numbers."}},
+ {s:4,w:"nova",t:"Oh, I see my mistake. I was stepping forward instead of cutting the rest in half."}
+]};
+
+let topics = load("tb3_topics") || JSON.parse(JSON.stringify(DEFAULT_TOPICS));
+let subs = load("tb3_subs") || [];
+let S = null, role = "student", screen = "home", tTab = "review", reviewId = null, blind = false;
+let sample = null, aiKnown = false, dict = null, tts = null, ttsOn = false, busy = false, pasted = 0;
+let aiResolve; const aiReady = new Promise(r => aiResolve = r);
+
+/* ---------- navigation ---------- */
+function show(){
+  $$(".view").forEach(v => v.classList.remove("on"));
+  $("#roleBtn").textContent = role==="teacher" ? "Student view" : "Teacher view";
+  $("#wrap").classList.toggle("wide", role==="teacher");
+  if(role==="teacher"){ renderTeacher(); $("#v-teacher").classList.add("on"); return; }
+  if(screen==="home") renderHome();
+  if(screen==="result") renderResult();
+  $("#v-"+screen).classList.add("on");
+  window.scrollTo(0,0);
+}
+$("#roleBtn").addEventListener("click", () => { role = role==="teacher" ? "student" : "teacher"; show(); });
+$("#brand").addEventListener("click", leave);
+function leave(){ stopPlay(); S = null; busy = false; setBusy(); if(tts) try{ tts.stop(); }catch(e){} role = "student"; screen = "home"; show(); }
+
+/* ---------- home ---------- */
+function renderHome(){
+  const off = aiKnown && !sample;
+  $("#noAI").hidden = !off;
+  $("#topicList").innerHTML = topics.map(t => `<button class="topic" data-id="${esc(t.id)}" ${off?"disabled":""}><b>${esc(t.title)}</b><span>${esc(t.course||"")}</span></button>`).join("");
+  $$(".topic").forEach(el => el.addEventListener("click", () => openTopic(topics.find(t => t.id===el.dataset.id), false)));
+}
+$("#demoGo").addEventListener("click", () => openTopic(DEFAULT_TOPICS[0], true));
+
+function newSession(topic, demo){
+  return {id: demo ? "demo" : "s"+Date.now(), topic:JSON.parse(JSON.stringify(topic)), mode:"assessed", scripted:!!demo, stage:0, msgs:[], results:[null,null,null,null,null],
+    covered:{}, pre:demo?EX.pre:null, post:demo?EX.post:null, startedAt:Date.now(), finishedAt:null, note:"", oral:false, pending:[],
+    mis: topic.mis.length ? topic.mis[Math.floor(Math.random()*topic.mis.length)] : "",
+    teacher:{scores:{}, comment:"", approved:false}};
+}
+function scaleHTML(sel){ return [1,2,3,4,5].map(n => `<button type="button" data-n="${n}" aria-pressed="${sel===n}" aria-label="${n} of 5">${n}</button>`).join(""); }
+
+/* ---------- learn ---------- */
+function openTopic(topic, demo){
+  S = newSession(topic, demo);
+  $("#lCourse").textContent = (demo ? "Demo · " : "") + (topic.course||"");
+  $("#lTitle").textContent = topic.title;
+  $("#lMaterial").innerHTML = (topic.mat && topic.mat.length ? topic.mat : ["Your teacher has not added material for this topic yet. Use your lecture notes."]).map(p => `<p>${esc(p)}</p>`).join("");
+  $("#preScale").innerHTML = scaleHTML(S.pre);
+  $("#practiceBtn").hidden = !!demo;
+  screen = "learn"; show();
+}
+$("#preScale").addEventListener("click", e => { const b = e.target.closest("button"); if(!b || !S) return; S.pre = +b.dataset.n; $("#preScale").innerHTML = scaleHTML(S.pre); });
+$("#startBtn").addEventListener("click", () => startTeach("assessed"));
+$("#practiceBtn").addEventListener("click", () => startTeach("practice"));
+
+/* ---------- teach ---------- */
+function startTeach(mode){
+  S.mode = mode; S.startedAt = Date.now();
+  $("#msgs").innerHTML = ""; $("#tip").hidden = true;
+  $("#composer").hidden = S.scripted; $("#demoBar").hidden = !S.scripted;
+  $("#nextBtn").hidden = S.scripted;
+  $("#ttsBtn").hidden = !tts;
+  screen = "teach"; show();
+  if(S.scripted){ exPos = 0; enterStage(0, false); exStep(); }
+  else enterStage(0, true);
+}
+function learnerCount(i){ return S.msgs.filter(m => m.stage===i && m.who==="me").length; }
+function renderStage(){
+  $("#stageBar").innerHTML = STAGES.map((_,i) => `<span class="${i<S.stage?"done":i===S.stage?"cur":""}"></span>`).join("");
+  $("#stageName").textContent = `${S.stage+1} of 5 · ${STAGES[S.stage].name}`;
+  $("#stageGoal").textContent = STAGES[S.stage].goal;
+  const last = S.stage===4, said = learnerCount(S.stage) > 0;
+  $("#nextBtn").textContent = last ? (said ? "Finish" : "Skip and finish") : (said ? "Next stage" : "Skip stage");
+  $("#nextBtn").className = "btn" + (said ? " primary" : "");
+}
+function enterStage(i, live){
+  S.stage = i; renderStage();
+  sys(`${STAGES[i].name}: ${STAGES[i].goal}`);
+  if(live) novaTurn(true);
+}
+function sys(text){ const d=document.createElement("div"); d.className="msg sys"; d.textContent=text; $("#msgs").appendChild(d); scroll(); return d; }
+function bubble(who, text, pf){
+  const d=document.createElement("div"); d.className="msg "+who;
+  if(who==="nova"){ const w=document.createElement("span"); w.className="who"; w.textContent = S && S.scripted ? "Nova · scripted" : "Nova · AI"; d.appendChild(w); }
+  const b=document.createElement("span"); b.className="body"; b.textContent=text; d.appendChild(b);
+  if(pf){ const s=document.createElement("span"); s.className="pf"; s.textContent=`${pf} characters pasted`; d.appendChild(s); }
+  $("#msgs").appendChild(d); scroll(); return b;
+}
+function scroll(){ const m=$("#msgs"); m.scrollTop=m.scrollHeight; }
+function transcript(s){ return s.msgs.map(m => `${STAGES[m.stage].name} · ${m.who==="me"?"STUDENT":"NOVA"}${m.pasted?` [${m.pasted} characters pasted]`:""}: ${m.text}`).join("\n\n"); }
+
+function novaPrompt(opening){
+  const st = STAGES[S.stage], t = S.topic;
+  const mis = S.mis || "a common beginner misunderstanding of the topic";
+  const instr = st.nova.replace("{SCEN}", t.scen || "a realistic small task you invent").replace("{MIS}", mis);
+  return `You are role-playing NOVA, a curious, friendly first-year university student in Kazakhstan. The learner is teaching you the topic "${t.title}". Their explanation is being used as evidence of their own understanding.
+
+RULES (strict):
+- You do NOT know this topic. Never explain it, never lecture, never give the correct answer or hints to it.
+- Your only beliefs about the topic are these misconceptions (the teacher chose them): ${t.mis.join("; ")||"none"}.
+- Keep replies short: 1 to 3 sentences, under 60 words. Sound like a real student. No lists, no markdown.
+- If the learner is vague, uses jargon, or skips steps, say honestly that you are confused and ask ONE specific question.
+- Prefer "why" and "how do you know" questions that make the learner reason, not only describe.
+- If the learner says something incorrect, do not correct it; ask a question that exposes the problem ("but then what happens if…?").
+- Do not flatter. Only say you understand when the explanation would really let a beginner understand.
+- Reply in the language the learner last used (Kazakh, Russian or English). If there is no learner message yet, use English.
+
+CURRENT STAGE ${S.stage+1}/5 (${st.name}): ${instr}
+${opening ? "This stage has just started: write your opening message for it." : "Continue the conversation naturally within this stage."}
+
+CONVERSATION SO FAR:
+${S.msgs.map(m => `[Stage ${m.stage+1}] ${m.who==="me"?"LEARNER":"NOVA"}: ${m.text}`).join("\n") || "(none yet)"}
+
+Write only Nova's next message.`;
+}
+async function novaTurn(opening){
+  const mine = S;
+  busy = true; setBusy();
+  const d = bubble("nova", "…");
+  const ai = await aiReady;
+  if(mine!==S){ busy=false; setBusy(); return; }
+  if(!ai){ d.parentNode.remove(); sys("Live AI is not available in this view. Use the demo from the start page."); busy=false; setBusy(); return; }
+  try{
+    const r = await ai(novaPrompt(opening), {cache:false, onText:({text}) => { if(mine===S){ d.textContent = text; scroll(); } }});
+    if(mine!==S){ busy=false; setBusy(); return; }
+    const text = (r.text||"").trim();
+    d.textContent = text;
+    S.msgs.push({who:"nova", text, stage:S.stage, at:Date.now()});
+    speak(text);
+  }catch(e){ d.parentNode.remove(); aiError(e); }
+  busy = false; setBusy();
+}
+function speak(text){ if(ttsOn && tts) try{ tts.speak(text).catch(()=>{}); }catch(e){} }
+async function coach(i){
+  const mine = S, st = STAGES[i], t = S.topic;
+  const stageMsgs = S.msgs.filter(m => m.stage===i && m.who==="me").map(m => m.text).join("\n---\n");
+  if(!stageMsgs) return;
+  const prompt = `You support a university TEACHER who will make the final judgement. Collect evidence about the LEARNER's understanding from their own messages in stage "${st.name}" (Bloom level: ${st.bloom}) while they teach the topic "${t.title}" to an AI student.
+Stage goal: ${st.goal}
+Teacher's key ideas (numbered from 0): ${JSON.stringify(t.keys)}
+Misconceptions the AI student holds: ${JSON.stringify(t.mis)}
+
+Judge conceptual understanding only. Do NOT penalise language, grammar, spelling, accent, informality or which language (Kazakh/Russian/English) is used. Do not reward length or confident tone.
+Levels: 0 ${LEVEL_DESC[0]}; 1 ${LEVEL_DESC[1]}; 2 ${LEVEL_DESC[2]}; 3 ${LEVEL_DESC[3]}; 4 ${LEVEL_DESC[4]}.
+
+Full conversation for context:
+${S.msgs.map(m => `[Stage ${m.stage+1}] ${m.who==="me"?"LEARNER":"NOVA"}: ${m.text}`).join("\n")}
+
+Learner's messages in THIS stage:
+${stageMsgs}
+
+Return JSON only:
+{"covered":[{"i":index of a key idea the learner has correctly explained anywhere so far,"quote":"the learner's exact words that show it, max 20 words"}],
+ "errors":[short descriptions of factual errors the learner made in this stage, empty if none],
+ "score":integer 0-4 for this stage,
+ "evidence":"one sentence with a short exact quote from the learner that justifies the level",
+ "tip":"one short, specific next step for the learner, in the learner's language, that does not reveal a key idea"}`;
+  try{
+    const v = await askJSON(prompt, "quick");
+    const r = {score:Math.max(0, Math.min(4, parseInt(v.score)||0)), errors:(v.errors||[]).map(String), evidence:String(v.evidence||""), tip:String(v.tip||"")};
+    (v.covered||[]).forEach(c => { const k = parseInt(c && c.i); if(k>=0 && k<t.keys.length && mine.covered[k]===undefined) mine.covered[k] = String(c.quote||""); });
+    mine.results[i] = r;
+    if(mine===S && screen==="teach" && S.mode==="practice" && i===S.stage && r.tip){
+      const tip = $("#tip"); tip.hidden = false;
+      tip.innerHTML = `<span class="ai">AI tip</span> ${esc(r.tip)}${r.errors.length?`<div class="small" style="color:var(--warn);margin-top:3px">Check: ${r.errors.map(esc).join("; ")}</div>`:""}`;
+    }
+  }catch(e){ /* evidence collection failing must not block the student */ }
+}
+async function askJSON(prompt, tier){
+  const ai = await aiReady; if(!ai) throw new Error("no ai");
+  const opts = {cache:false}; if(tier) opts.modelTier = tier;
+  if(typeof ai.json === "function") return await ai.json(prompt, opts);
+  const r = await ai(prompt, opts); const m = (r.text||"").match(/\{[\s\S]*\}/); return JSON.parse(m?m[0]:r.text);
+}
+function aiError(e){
+  const code = e && e.code;
+  if(code==="not_granted"){ sys("AI access was not allowed in this view."); setAI(null); }
+  else if(code==="rate_limited") sys("Too many requests. Wait a few seconds and send again.");
+  else sys("Nova could not answer (" + ((e&&e.message)||"error") + "). Try sending again.");
+}
+$("#composer").addEventListener("submit", async ev => {
+  ev.preventDefault();
+  const text = $("#inp").value.trim();
+  if(!text || busy || !S || S.scripted) return;
+  if(dict && listening){ try{ await dict.stop(); }catch(e){} }
+  $("#inp").value = ""; autosize();
+  const pf = pasted >= 40 ? Math.min(pasted, text.length) : 0; pasted = 0;
+  bubble("me", text, pf);
+  S.msgs.push({who:"me", text, stage:S.stage, at:Date.now(), pasted:pf});
+  renderStage();
+  if(S.mode==="practice") S.pending.push(coach(S.stage));
+  await novaTurn(false);
+});
+$("#inp").addEventListener("paste", e => { try{ pasted += (e.clipboardData.getData("text")||"").length; }catch(_){} });
+$("#inp").addEventListener("keydown", e => { if(e.key==="Enter" && !e.shiftKey){ e.preventDefault(); $("#composer").requestSubmit(); } });
+$("#inp").addEventListener("input", () => { if(!$("#inp").value) pasted = 0; autosize(); });
+function autosize(){ const t=$("#inp"); t.style.height="auto"; t.style.height=Math.min(t.scrollHeight,150)+"px"; }
+function setBusy(){ $("#sendBtn").disabled = busy; }
+$("#nextBtn").addEventListener("click", () => {
+  if(busy || !S || S.scripted) return;
+  const i = S.stage;
+  if(!learnerCount(i)) S.results[i] = {score:0, errors:[], evidence:"Stage skipped by the student", tip:"", skipped:true};
+  else if(S.mode==="assessed" || !S.results[i]) S.pending.push(coach(i));
+  $("#tip").hidden = true;
+  if(i<4) enterStage(i+1, true); else finish();
+});
+$("#quitBtn").addEventListener("click", leave);
+
+/* ---------- demo playback ---------- */
+let exPos = 0, playTimer = null;
+function exStep(){
+  if(!S || !S.scripted) return false;
+  if(exPos >= EX.steps.length){ stopPlay(); finish(); return false; }
+  const st = EX.steps[exPos++];
+  if(st.s !== S.stage) enterStage(st.s, false);
+  bubble(st.w, st.t);
+  S.msgs.push({who:st.w, text:st.t, stage:st.s, at:S.startedAt + exPos*42000});
+  if(st.coach){ S.results[st.s] = {score:st.coach.score, errors:st.coach.errors, evidence:st.coach.evidence, tip:st.coach.tip}; Object.keys(st.coach.covered).forEach(k => S.covered[k] = st.coach.covered[k]); }
+  if(st.w==="nova") speak(st.t);
+  $("#demoNext").textContent = exPos >= EX.steps.length ? "Finish" : "Next message";
+  return true;
+}
+function stopPlay(){ if(playTimer){ clearTimeout(playTimer); playTimer = null; } const b = $("#demoPlay"); if(b) b.textContent = "Play"; }
+function play(){
+  if(playTimer){ stopPlay(); return; }
+  $("#demoPlay").textContent = "Pause";
+  const tick = () => { if(!S || !S.scripted || screen!=="teach"){ stopPlay(); return; }
+    const last = EX.steps[Math.max(0, exPos-1)]; const wait = Math.min(5200, 1100 + last.t.length*16);
+    playTimer = setTimeout(() => { if(exStep()) tick(); }, wait); };
+  tick();
+}
+$("#demoPlay").addEventListener("click", play);
+$("#demoNext").addEventListener("click", () => { stopPlay(); exStep(); });
+$("#demoEnd").addEventListener("click", () => { stopPlay(); while(exPos < EX.steps.length) exStep(); finish(); });
+document.addEventListener("keydown", e => { if(e.key==="ArrowRight" && role==="student" && screen==="teach" && S && S.scripted){ e.preventDefault(); stopPlay(); exStep(); } });
+
+/* ---------- finish + result ---------- */
+async function finish(){
+  if(tts && !S.scripted) try{ tts.stop(); }catch(e){}
+  screen = "result"; S.waiting = !S.scripted && S.pending.length > 0; show();
+  if(S.scripted){ S.finishedAt = S.startedAt + EX.steps.length*42000; S.note = S.note || "I first said 10 steps in the Apply stage, then corrected myself. I hope the correction counts."; }
+  else { await Promise.all(S.pending.map(p => Promise.resolve(p).catch(()=>{}))); S.finishedAt = Date.now(); }
+  S.pending = []; S.waiting = false;
+  if(S.mode==="assessed"){ const c = Object.assign({}, S); delete c.pending; delete c.waiting; subs = subs.filter(x => x.id!==c.id); subs.unshift(c); subs = subs.slice(0,20); save("tb3_subs", subs); S = c; }
+  if(screen==="result" && role==="student") renderResult();
+}
+function mins(s){ return Math.max(1, Math.round(((s.finishedAt||Date.now()) - s.startedAt)/60000)); }
+function stageRows(s, T){
+  return STAGES.map((st,i) => { const r = s.results[i];
+    return `<div class="stagerow"><div><b style="font-weight:500">${st.name}</b></div>
+      <div>${r ? esc(r.evidence) : '<span class="muted">No notes</span>'}${r&&r.errors&&r.errors.length?`<div class="err">${r.errors.map(esc).join("; ")}</div>`:""}</div>
+      <div class="lv">${r ? `${LEVEL[r.score]} <span class="muted">${r.score}/4</span>` : ""}</div></div>`; }).join("");
+}
+function keyList(s){
+  const k = s.topic.keys; if(!k.length) return "";
+  return `<div class="keys">${k.map((x,i) => s.covered[i]!==undefined ? `<div><span>✓</span><span>${esc(x)}</span></div>` : `<div class="no"><span>–</span><span>${esc(x)} (not found)</span></div>`).join("")}</div>`;
+}
+function renderResult(){
+  const s = S, box = $("#resultBox"); if(!s){ screen="home"; return show(); }
+  if(s.waiting){ box.innerHTML = `<p class="muted"><span class="spin"></span> Collecting evidence from your explanation…</p>`; return; }
+  const T = s.teacher, practice = s.mode==="practice";
+  const tot = [0,1,2,3,4].reduce((a,i) => a + (+T.scores[i]||0), 0);
+  let head;
+  if(practice) head = `<div><div class="label">Practice · ${esc(s.topic.title)}</div><h2>Practice finished. Nothing was sent.</h2></div>`;
+  else if(T.approved) head = `<div><div class="label">${s.scripted?"Demo · ":""}${esc(s.topic.title)}</div><div class="row" style="align-items:baseline"><span class="score">${tot}/20</span><span class="muted">set by your teacher</span></div>${T.comment?`<p style="margin-top:8px">“${esc(T.comment)}”</p>`:""}</div>`;
+  else head = `<div><div class="label">${s.scripted?"Demo · ":""}${esc(s.topic.title)}</div><h2>Sent to your teacher.</h2><p class="muted" style="margin-top:6px">Your teacher reads the conversation and decides the score. The notes below are suggestions from the AI, not your score.</p></div>`;
+  const after = `<div class="stack" style="gap:8px"><span class="small muted">Now that you have taught it, how well do you understand it? ${s.pre?`Before, you said ${s.pre} of 5.`:""}</span><div class="scale" id="postScale">${scaleHTML(s.post)}</div>${s.pre&&s.post&&s.post<s.pre?`<span class="small muted">Lower than before. That is normal: explaining shows gaps that reading hides.</span>`:""}</div>`;
+  const notes = `<div class="panel stack"><div class="row"><span class="label grow">${s.scripted?"Evidence notes (scripted for the demo)":"Evidence notes"}</span>${s.scripted?"":'<span class="ai">AI · suggestion</span>'}</div><div>${stageRows(s)}</div><hr><div class="label">Key ideas set by the teacher</div>${keyList(s)}</div>`;
+  const voice = (!practice && !T.approved) ? `<div class="stack" style="gap:8px"><label class="f" for="stuNote" style="margin:0">Note for your teacher (optional)</label><textarea id="stuNote" rows="2" placeholder="Anything the teacher should know">${esc(s.note)}</textarea><label class="row small"><input type="checkbox" id="stuOral" ${s.oral?"checked":""}> I would like a live oral with my teacher instead</label></div>` : "";
+  const next = `<div class="row">${s.scripted && !T.approved ? '<button class="btn primary big" id="toTeacher">See the teacher\'s side</button>' : ""}<button class="btn" id="resHome">Back to start</button></div>`;
+  box.innerHTML = head + after + notes + voice + next + `<details><summary>Full conversation</summary><div class="transcript">${esc(transcript(s))}</div></details>`;
+  $("#postScale").addEventListener("click", e => { const b = e.target.closest("button"); if(!b) return; s.post = +b.dataset.n; save("tb3_subs", subs); renderResult(); });
+  $("#resHome").addEventListener("click", leave);
+  const n = $("#stuNote"); if(n) n.addEventListener("input", e => { s.note = e.target.value; save("tb3_subs", subs); });
+  const o = $("#stuOral"); if(o) o.addEventListener("change", e => { s.oral = e.target.checked; save("tb3_subs", subs); });
+  const tt = $("#toTeacher"); if(tt) tt.addEventListener("click", () => { reviewId = s.id; role = "teacher"; tTab = "review"; show(); window.scrollTo(0,0); });
+}
+
+/* ---------- teacher ---------- */
+$("#tabReview").addEventListener("click", () => { tTab = "review"; renderTeacher(); });
+$("#tabTopics").addEventListener("click", () => { tTab = "topics"; renderTeacher(); });
+function renderTeacher(){
+  $("#tabReview").style.color = tTab==="review" ? "var(--ink)" : ""; $("#tabTopics").style.color = tTab==="topics" ? "var(--ink)" : "";
+  $("#reviewPane").hidden = tTab!=="review"; $("#topicsPane").hidden = tTab!=="topics";
+  if(tTab==="topics") return renderSetup();
+  if(!subs.find(x => x.id===reviewId)) reviewId = subs[0] ? subs[0].id : null;
+  $("#subList").innerHTML = subs.length > 1 ? subs.map(x => `<button class="sub" data-id="${esc(x.id)}" aria-current="${x.id===reviewId}"><b style="font-weight:500">${esc(x.topic.title)}</b><span>${x.scripted?"demo":new Date(x.finishedAt).toLocaleDateString()} · ${x.teacher.approved?"approved":"to review"}${x.oral?" · oral requested":""}</span></button>`).join("") : "";
+  $$(".sub").forEach(b => b.addEventListener("click", () => { reviewId = b.dataset.id; renderTeacher(); }));
+  renderReview();
+}
+function renderReview(){
+  const s = subs.find(x => x.id===reviewId), box = $("#reviewBox");
+  if(!s){ box.innerHTML = `<p class="muted">Nothing to review yet. Finish a teach-back on the student side, or watch the demo first.</p>`; return; }
+  const T = s.teacher, me = s.msgs.filter(m => m.who==="me"), pf = me.filter(m => m.pasted).length;
+  const done = [0,1,2,3,4].every(i => T.scores[i]!==undefined);
+  const tot = [0,1,2,3,4].reduce((a,i) => a + (+T.scores[i]||0), 0);
+  const agree = [0,1,2,3,4].filter(i => s.results[i] && T.scores[i]===s.results[i].score).length;
+  const rows = STAGES.map((st,i) => { const r = s.results[i], tv = T.scores[i], reveal = !blind || tv!==undefined;
+    return `<div class="stagerow"><div><b style="font-weight:500">${st.name}</b><div class="small muted">${r ? (reveal ? `suggested ${r.score}/4` : "suggestion hidden") : "no notes"}</div></div>
+      <div>${r ? esc(r.evidence) : '<span class="muted">No evidence collected</span>'}${r&&r.errors&&r.errors.length?`<div class="err">${r.errors.map(esc).join("; ")}</div>`:""}</div>
+      <div><select data-i="${i}" aria-label="Your score for ${st.name}"><option value="">Score</option>${[0,1,2,3,4].map(n => `<option value="${n}" ${tv===n?"selected":""}>${n} · ${LEVEL[n]}</option>`).join("")}</select></div></div>`; }).join("");
+  box.innerHTML = `
+    <div><div class="label">${s.scripted?"Demo · scripted example":"Teach-back"}</div><h2>${esc(s.topic.title)}</h2>
+      <p class="muted" style="margin-top:6px">${mins(s)} min · ${me.length} student messages · own rating ${s.pre||"–"} → ${s.post||"–"} of 5 · ${pf ? pf+" with pasted text" : "no pasted text"}</p></div>
+    ${s.oral?`<p><b style="font-weight:500">The student asked for a live oral instead.</b> Use this record as preparation.</p>`:""}
+    ${s.note?`<p>Student's note: “${esc(s.note)}”</p>`:""}
+    <div class="panel stack">
+      <div class="row"><span class="label grow">Score each stage</span><label class="row small muted"><input type="checkbox" id="blind" ${blind?"checked":""}> Hide AI suggestions until I score</label></div>
+      <div>${rows}</div>
+      <p class="small muted">${s.scripted?"In the demo the quotes and suggested levels are scripted.":"Quotes and suggested levels come from the AI."} Read the conversation before you agree with them.</p>
+      <div><label class="f" for="tComment">Feedback to the student</label><textarea id="tComment" rows="2" placeholder="For example: strong correction of Nova; revisit how you estimate the number of steps.">${esc(T.comment)}</textarea></div>
+      <div class="row"><span class="score">${tot}/20</span><span class="muted grow">${T.approved ? `Approved and released. You matched the suggestion on ${agree} of 5 stages.` : done ? "Nothing reaches the student until you approve." : "Score all five stages to approve."}</span>
+        <button class="btn primary" id="approve" ${done?"":"disabled"}>${T.approved?"Update":"Approve and release"}</button></div>
+    </div>
+    <details ${s.scripted?"":"open"}><summary>Full conversation</summary><div class="transcript">${esc(transcript(s))}</div></details>
+    <details><summary>Key ideas and where they were found</summary>${s.topic.keys.map((x,i) => `<p style="margin:6px 0">${s.covered[i]!==undefined?"✓":"–"} ${esc(x)}${s.covered[i]?` <span class="muted">“${esc(s.covered[i])}”</span>`:""}</p>`).join("")}</details>`;
+  box.querySelectorAll("select[data-i]").forEach(sel => sel.addEventListener("change", () => { if(sel.value==="") delete T.scores[+sel.dataset.i]; else T.scores[+sel.dataset.i] = +sel.value; T.approved = false; save("tb3_subs", subs); renderReview(); }));
+  $("#blind").addEventListener("change", e => { blind = e.target.checked; renderReview(); });
+  $("#tComment").addEventListener("input", e => { T.comment = e.target.value; save("tb3_subs", subs); });
+  $("#approve").addEventListener("click", () => { T.approved = true; T.approvedAt = Date.now(); save("tb3_subs", subs); if(S && S.id===s.id) S = s; renderReview(); });
+}
+
+/* ---------- topic setup ---------- */
+let editId = null;
+function renderSetup(){
+  if(!topics.find(t => t.id===editId)) editId = topics[0] && topics[0].id;
+  $("#setSel").innerHTML = topics.map(t => `<option value="${esc(t.id)}" ${t.id===editId?"selected":""}>${esc(t.title)}</option>`).join("");
+  const t = topics.find(x => x.id===editId) || {title:"",course:"",mat:[],keys:[],mis:[],scen:""};
+  $("#setTitle").value = t.title; $("#setCourse").value = t.course||""; $("#setMat").value = (t.mat||[]).join("\n"); $("#setKeys").value = t.keys.join("\n"); $("#setMis").value = t.mis.join("\n"); $("#setScen").value = t.scen||"";
+  $("#saveMsg").textContent = "";
+}
+$("#setSel").addEventListener("change", e => { editId = e.target.value; renderSetup(); });
+$("#saveTopic").addEventListener("click", () => {
+  const lines = s => s.split("\n").map(x => x.trim()).filter(Boolean);
+  const t = topics.find(x => x.id===editId); if(!t) return;
+  t.title = $("#setTitle").value.trim()||"Untitled"; t.course = $("#setCourse").value.trim(); t.mat = lines($("#setMat").value); t.keys = lines($("#setKeys").value); t.mis = lines($("#setMis").value); t.scen = $("#setScen").value.trim();
+  save("tb3_topics", topics); renderSetup(); $("#saveMsg").textContent = "Saved";
+});
+$("#newTopic").addEventListener("click", () => {
+  const t = {id:"t"+Date.now(), title:"New topic", course:"", mat:[], keys:[], mis:[], scen:""};
+  topics.push(t); editId = t.id; save("tb3_topics", topics); renderSetup(); $("#setTitle").focus();
+});
+
+/* ---------- voice ---------- */
+let listening = false, baseText = "";
+$("#micBtn").addEventListener("click", () => {
+  if(!dict) return;
+  if(listening){ dict.stop().catch(()=>{}); return; }
+  baseText = $("#inp").value ? $("#inp").value.trimEnd()+" " : "";
+  dict.start().catch(e => { if(e && e.code==="not_granted") $("#micBtn").hidden = true; });
+});
+$("#ttsBtn").addEventListener("click", () => {
+  ttsOn = !ttsOn; $("#ttsBtn").textContent = "Read Nova aloud: " + (ttsOn ? "on" : "off"); $("#ttsBtn").setAttribute("aria-pressed", ttsOn);
+  if(!ttsOn && tts) try{ tts.stop(); }catch(e){}
+});
+
+/* ---------- capabilities ---------- */
+function setAI(s){
+  sample = s; aiKnown = true; aiResolve(s);
+  const b = $("#aiStatus");
+  b.className = "dot sp" + (s ? " live" : "");
+  b.lastElementChild.textContent = s ? "Live AI ready" : "Demo only";
+  if(role==="student" && screen==="home") renderHome();
+}
+show(); setBusy();
+let tries = 0;
+(function boot(){
+  if(!(window.claude && typeof window.claude.use === "function")){ if(++tries < 30) return setTimeout(boot, 100); return setAI(null); }
+  window.claude.use("sample").then(s => setAI(s || null)).catch(() => setAI(null));
+  window.claude.use("dictation").then(d => {
+    if(!d) return; dict = d; $("#micBtn").hidden = false;
+    d.onState(({state}) => { listening = state==="listening"; $("#micBtn").classList.toggle("on", listening); $("#micBtn").title = listening ? "Stop listening" : "Speak instead of typing"; });
+    d.onPartial(({text}) => { $("#inp").value = baseText + text; autosize(); });
+    d.onFinal(({text}) => { baseText = baseText + text + " "; $("#inp").value = baseText; autosize(); });
+  }).catch(()=>{});
+  window.claude.use("tts").then(t => { if(!t) return; tts = t; if(screen==="teach") $("#ttsBtn").hidden = false; }).catch(()=>{});
+})();
+})();
+</script>
+</body>
+</html>
