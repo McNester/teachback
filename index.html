@@ -30,7 +30,7 @@ button,input,textarea,select{font:inherit;color:inherit}
 .wrap{max-width:760px;margin:0 auto;padding:18px 18px 56px}
 .wrap.wide{max-width:980px}
 h1,h2{font-family:var(--display);font-weight:400;margin:0;text-wrap:balance;letter-spacing:-.01em}
-h1{font-size:46px;line-height:1.05}
+h1{font-size:44px;line-height:1.08}
 h2{font-size:30px;line-height:1.15}
 p{margin:0}
 .muted{color:var(--muted)} .small{font-size:14px}
@@ -41,9 +41,12 @@ p{margin:0}
 .grow{flex:1;min-width:0}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
-.top{display:flex;align-items:center;gap:14px;margin-bottom:34px}
+.top{display:flex;align-items:center;gap:14px;margin-bottom:34px;flex-wrap:wrap}
 .brand{font-family:var(--display);font-size:24px;border:0;background:none;cursor:pointer;padding:0}
 .top .sp{margin-left:auto}
+.langs{display:inline-flex;gap:2px}
+.langs button{border:0;background:none;padding:2px 6px;cursor:pointer;color:var(--muted);font-size:13px;border-radius:6px}
+.langs button[aria-pressed="true"]{color:var(--ink);background:var(--soft)}
 .link{border:0;background:none;padding:0;cursor:pointer;color:var(--muted);text-decoration:underline;text-underline-offset:3px}
 .link:hover{color:var(--ink)}
 .dot{font-size:13px;color:var(--muted);display:inline-flex;align-items:center;gap:6px}
@@ -68,6 +71,7 @@ hr{border:0;border-top:1px solid var(--line);margin:6px 0}
 .topic:hover b{color:var(--accent)}
 .topic b{font-weight:500;font-size:18px}
 .topic span{color:var(--muted);font-size:14px;margin-left:auto;text-align:right}
+.nextstep{font-size:14px;color:var(--muted);margin-top:4px}
 .topic:disabled{opacity:.45;cursor:not-allowed}
 details summary{cursor:pointer;color:var(--muted)}
 details[open] summary{margin-bottom:10px}
@@ -134,34 +138,33 @@ label.f{display:block;font-size:13px;color:var(--muted);margin-bottom:5px}
 <div class="wrap" id="wrap">
   <header class="top">
     <button class="brand" id="brand">TeachBack</button>
-    <span id="aiStatus" class="dot sp" role="status"><i></i><span>Connecting…</span></span>
-    <button class="link small" id="roleBtn">Teacher view</button>
+    <span id="aiStatus" class="dot sp" role="status"><i></i><span data-t="ai_conn"></span></span>
+    <span class="langs" role="group" aria-label="Language">
+      <button data-lang="en">EN</button><button data-lang="ru">RU</button><button data-lang="kk">KZ</button>
+    </span>
+    <button class="link small" id="roleBtn"></button>
   </header>
 
   <!-- HOME -->
   <section id="v-home" class="view on">
     <div class="stack" style="gap:26px">
       <div class="stack">
-        <h1>Teach it to show you understand it.</h1>
-        <p class="muted" style="font-size:18px;max-width:600px">Read the material. Then explain it to Nova, a student who knows nothing about it and keeps asking. Your teacher reads what you said and decides the score.</p>
-      </div>
-      <div class="row">
-        <button class="btn primary big" id="demoGo">Watch the demo</button>
-        <span class="small muted">A full walkthrough, scripted in advance. No live AI needed.</span>
+        <h1 data-t="h1"></h1>
+        <p class="muted" style="font-size:18px;max-width:620px" data-t="sub"></p>
       </div>
       <div>
-        <div class="label" style="margin-bottom:8px">Or start a live session</div>
+        <div class="label" style="margin-bottom:8px" data-t="demos_label"></div>
+        <div class="topiclist" id="demoList"></div>
+      </div>
+      <div>
+        <div class="label" style="margin-bottom:8px" data-t="live_label"></div>
         <div class="topiclist" id="topicList"></div>
-        <p class="small muted" id="noAI" hidden style="margin-top:10px">Live AI is not available in this view, so only the demo runs here.</p>
+        <p class="small muted" id="noAI" hidden style="margin-top:10px" data-t="no_ai"></p>
       </div>
       <details class="small">
-        <summary>How it works, and what is real in this prototype</summary>
+        <summary data-t="how_sum"></summary>
         <ul class="plain">
-          <li><b>You</b> do all the explaining. Nova never gives answers.</li>
-          <li><b>AI</b> plays Nova and afterwards collects quotes from what you said, with a suggested level. Everything it writes is marked <span class="ai">AI</span>.</li>
-          <li><b>Your teacher</b> sets the key ideas beforehand, reads the conversation and decides the score. You can add a note or ask for a live oral instead.</li>
-          <li><b>Works now:</b> live conversation in five stages, evidence notes, teacher review and approval, topic setup, voice input and read-aloud where the browser allows. Kazakh, Russian or English.</li>
-          <li><b>Not built yet:</b> accounts, Moodle link, central storage (records stay in this browser), group analytics.</li>
+          <li data-t="how1"></li><li data-t="how2"></li><li data-t="how3"></li><li data-t="how4"></li><li data-t="how5"></li>
         </ul>
       </details>
     </div>
@@ -169,24 +172,24 @@ label.f{display:block;font-size:13px;color:var(--muted);margin-bottom:5px}
 
   <!-- LEARN -->
   <section id="v-learn" class="view">
-    <div class="steps"><b class="cur">1 Learn</b><i></i><b>2 Teach</b><i></i><b>3 Result</b></div>
+    <div class="steps"><b class="cur">1 <span data-t="s_learn"></span></b><i></i><b>2 <span data-t="s_teach"></span></b><i></i><b>3 <span data-t="s_result"></span></b></div>
     <div class="stack" style="gap:20px">
       <div><div class="label" id="lCourse"></div><h2 id="lTitle"></h2></div>
       <div class="panel material" id="lMaterial"></div>
       <div class="stack" style="gap:8px">
-        <span class="small muted">How well could you explain this to a beginner right now? (1 not at all, 5 fully)</span>
+        <span class="small muted" data-t="rate_pre"></span>
         <div class="scale" id="preScale"></div>
       </div>
       <div class="row">
-        <button class="btn primary big" id="startBtn">I'm ready to teach it</button>
-        <button class="link small" id="practiceBtn">Practise first: tips on, not sent to the teacher</button>
+        <button class="btn primary big" id="startBtn" data-t="start"></button>
+        <button class="link small" id="practiceBtn" data-t="practice"></button>
       </div>
     </div>
   </section>
 
   <!-- TEACH -->
   <section id="v-teach" class="view">
-    <div class="steps"><b>1 Learn</b><i></i><b class="cur">2 Teach</b><i></i><b>3 Result</b><span class="sp" style="margin-left:auto"></span><button class="link small" id="quitBtn">Leave</button></div>
+    <div class="steps"><b>1 <span data-t="s_learn"></span></b><i></i><b class="cur">2 <span data-t="s_teach"></span></b><i></i><b>3 <span data-t="s_result"></span></b><span style="margin-left:auto"></span><button class="link small" id="quitBtn" data-t="leave"></button></div>
     <div class="stagebar" id="stageBar"></div>
     <div class="row" style="margin-bottom:12px;align-items:baseline">
       <b id="stageName" style="font-weight:500"></b><span class="muted grow" id="stageGoal"></span>
@@ -194,56 +197,56 @@ label.f{display:block;font-size:13px;color:var(--muted);margin-bottom:5px}
     <div class="panel chat">
       <div class="msgs" id="msgs" aria-live="polite"></div>
       <form class="composer" id="composer">
-        <button type="button" class="round" id="micBtn" title="Speak instead of typing" hidden>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg><span class="sr">Speak</span>
+        <button type="button" class="round" id="micBtn" hidden>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg><span class="sr">Mic</span>
         </button>
-        <label for="inp" class="sr">Your explanation</label>
-        <textarea id="inp" rows="1" placeholder="Explain it to Nova…"></textarea>
-        <button class="round send" id="sendBtn" title="Send"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg><span class="sr">Send</span></button>
+        <label for="inp" class="sr" data-t="ph"></label>
+        <textarea id="inp" rows="1" data-t-ph="ph"></textarea>
+        <button class="round send" id="sendBtn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg><span class="sr">Send</span></button>
       </form>
       <div class="demobar" id="demoBar" hidden>
-        <button class="btn primary" id="demoPlay">Play</button>
-        <button class="btn" id="demoNext">Next message</button>
-        <button class="link small" id="demoEnd">Skip to the result</button>
-        <span class="small muted" style="margin-left:auto">Demo · scripted, not live AI</span>
+        <button class="btn primary" id="demoPlay"></button>
+        <button class="btn" id="demoNext"></button>
+        <button class="link small" id="demoEnd" data-t="skip_res"></button>
+        <span class="small muted" style="margin-left:auto" data-t="demo_tag"></span>
       </div>
     </div>
     <div class="row" style="margin-top:14px;align-items:flex-start">
       <div class="grow"><div class="tip" id="tip" hidden></div></div>
-      <button class="link small" id="ttsBtn" hidden aria-pressed="false">Read Nova aloud: off</button>
+      <button class="link small" id="ttsBtn" hidden aria-pressed="false"></button>
       <button class="btn" id="nextBtn"></button>
     </div>
   </section>
 
   <!-- RESULT -->
   <section id="v-result" class="view">
-    <div class="steps"><b>1 Learn</b><i></i><b>2 Teach</b><i></i><b class="cur">3 Result</b></div>
+    <div class="steps"><b>1 <span data-t="s_learn"></span></b><i></i><b>2 <span data-t="s_teach"></span></b><i></i><b class="cur">3 <span data-t="s_result"></span></b></div>
     <div id="resultBox" class="stack" style="gap:20px"></div>
   </section>
 
-  <!-- TEACHER -->
+  <!-- EDUCATOR -->
   <section id="v-teacher" class="view">
     <div class="row" style="margin-bottom:18px">
-      <h2 class="grow">Teacher</h2>
-      <button class="link small" id="tabReview">Review</button>
-      <button class="link small" id="tabTopics">Topics</button>
+      <h2 class="grow" data-t="t_title"></h2>
+      <button class="link small" id="tabReview" data-t="t_review"></button>
+      <button class="link small" id="tabTopics" data-t="t_topics"></button>
     </div>
     <div id="reviewPane" class="stack" style="gap:20px"><div id="subList"></div><div id="reviewBox" class="stack" style="gap:20px"></div></div>
     <div id="topicsPane" class="stack" hidden>
-      <p class="muted">You decide what counts as understanding. Students read the material; they never see the key ideas. Nova starts out believing the misconceptions.</p>
-      <div><label class="f" for="setSel">Topic</label><select id="setSel"></select></div>
+      <p class="muted" data-t="set_intro"></p>
+      <div><label class="f" for="setSel" data-t="set_topic"></label><select id="setSel"></select></div>
       <div class="two">
-        <div><label class="f" for="setTitle">Title</label><input type="text" id="setTitle"></div>
-        <div><label class="f" for="setCourse">Course</label><input type="text" id="setCourse"></div>
+        <div><label class="f" for="setTitle" data-t="set_title"></label><input type="text" id="setTitle"></div>
+        <div><label class="f" for="setCourse" data-t="set_course"></label><input type="text" id="setCourse"></div>
       </div>
-      <div><label class="f" for="setMat">Material students read first, one paragraph per line</label><textarea id="setMat" rows="5"></textarea></div>
+      <div><label class="f" for="setMat" data-t="set_mat"></label><textarea id="setMat" rows="5"></textarea></div>
       <div class="two">
-        <div><label class="f" for="setKeys">Key ideas, one per line</label><textarea id="setKeys" rows="6"></textarea></div>
-        <div><label class="f" for="setMis">Nova's misconceptions, one per line</label><textarea id="setMis" rows="6"></textarea></div>
+        <div><label class="f" for="setKeys" data-t="set_keys"></label><textarea id="setKeys" rows="6"></textarea></div>
+        <div><label class="f" for="setMis" data-t="set_mis"></label><textarea id="setMis" rows="6"></textarea></div>
       </div>
-      <div><label class="f" for="setScen">Case for the Apply stage</label><input type="text" id="setScen"></div>
-      <div class="row"><button class="btn primary" id="saveTopic">Save</button><button class="btn" id="newTopic">New topic</button><span class="small muted" id="saveMsg"></span></div>
-      <p class="small muted">Saved in this browser only. No login in this prototype, so anyone can open the teacher view.</p>
+      <div><label class="f" for="setScen" data-t="set_scen"></label><input type="text" id="setScen"></div>
+      <div class="row"><button class="btn primary" id="saveTopic" data-t="save"></button><button class="btn" id="newTopic" data-t="new_topic"></button><span class="small muted" id="saveMsg"></span></div>
+      <p class="small muted" data-t="set_note"></p>
     </div>
   </section>
 </div>
@@ -256,6 +259,194 @@ const $$ = s => Array.from(document.querySelectorAll(s));
 const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 function load(k){ try{ return JSON.parse(localStorage.getItem(k)); }catch(e){ return null; } }
 function save(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+
+/* ---------- interface text: English, Russian, Kazakh ---------- */
+const I = {
+en:{
+ role_teacher:"Educator view", role_student:"Student view", ai_conn:"Connecting…", ai_live:"Live AI ready", ai_demo:"Demo mode",
+ h1:"Practise teaching. Discover misconceptions. Improve understanding.",
+ sub:"An AI teaching sandbox. Read the material, then explain it to Nova, a novice AI learner who asks questions and never gives answers. You get evidence-linked feedback; your educator stays in charge of assessment.",
+ demos_label:"Demos · scripted in advance, no live AI needed", live_label:"Or start a live session",
+ d_bs:"strong attempt · in English", d_sd:"strong attempt · in Russian", d_rec:"weak attempt · in English",
+ no_ai:"Live AI is not available in this view, so only the demos run here.",
+ how_sum:"How it works, and what is real in this prototype",
+ how1:"You do all the explaining. Nova never gives answers.",
+ how2:"AI plays Nova and then links feedback to quotes from your explanation. Everything it writes is marked as AI.",
+ how3:"Your educator sets the key ideas, reviews the AI feedback and keeps authority over formal assessment.",
+ how4:"Works now: live conversation in five stages, evidence-linked feedback, educator review, topic setup, interface in English, Russian and Kazakh. Voice input and read-aloud only where the browser allows.",
+ how5:"Not built yet: accounts, LMS link, central storage (records stay in this browser), analytics.",
+ s_learn:"Learn", s_teach:"Teach", s_result:"Feedback",
+ rate_pre:"How well could you explain this to a beginner right now? (1 not at all, 5 fully)",
+ start:"I'm ready to teach it", practice:"Private practice: tips on, nothing shared",
+ no_mat:"Your educator has not added material for this topic yet. Use your lecture notes.",
+ leave:"Leave", ph:"Explain it to Nova…", play:"Play", pause:"Pause", next_msg:"Next message", finish:"Finish", skip_res:"Skip to the feedback",
+ demo_tag:"Demo · scripted, not live AI", tts_off:"Read Nova aloud: off", tts_on:"Read Nova aloud: on",
+ next_stage:"Next stage", skip_stage:"Skip stage", skip_finish:"Skip and finish", stage_of:"{0} of 5",
+ st0:"Explain", st1:"Demonstrate", st2:"Correct", st3:"Justify", st4:"Design",
+ g0:"Explain the concept in plain language, with an everyday example.",
+ g1:"Show Nova how to apply it in practice, step by step.",
+ g2:"Nova believes something wrong. Find it and explain why it is wrong.",
+ g3:"Compare two claims and defend a reasoned judgement.",
+ g4:"Create your own example, then check Nova's attempt at it.",
+ nova_ai:"Nova · AI", nova_script:"Nova · scripted", pasted:"{0} characters pasted",
+ no_live:"Live AI is not available in this view. Open a demo from the start page.",
+ err_grant:"AI access was not allowed in this view.", err_rate:"Too many requests. Wait a few seconds and send again.", err_other:"Nova could not answer. Try sending again.",
+ ai_tip:"AI tip", check:"Check", collecting:"Preparing feedback from your explanation…",
+ res_practice_h:"Practice finished. Nothing was shared.", res_sent_h:"Here is your feedback.",
+ res_sent_p:"AI feedback is a prompt for reflection, not an objective diagnosis. It has been shared with your educator, who reviews it and keeps authority over assessment.",
+ res_score_by:"reviewed by your educator",
+ rate_post:"Now that you have taught it, how well do you understand it?", rate_before:"Before, you said {0} of 5.",
+ rate_lower:"Lower than before. That is normal: explaining shows gaps that reading hides.",
+ ev_label:"Evidence-linked feedback", ev_label_demo:"Evidence-linked feedback (scripted for the demo)", ai_sugg:"AI · suggestion",
+ next_step:"Next step", no_notes:"No feedback", keys_label:"Key ideas set by the educator", not_found:"(not found)",
+ note_label:"Note for your educator (optional)", note_ph:"Anything the educator should know",
+ oral:"I would like a live conversation with my educator instead",
+ to_teacher:"See the educator's side", again:"Try again", home:"Back to start", full_conv:"Full conversation",
+ lv0:"Not shown", lv1:"Beginning", lv2:"Developing", lv3:"Secure", lv4:"Strong",
+ t_title:"Educator", t_review:"Review", t_topics:"Topics",
+ t_empty:"Nothing to review yet. Finish a session on the student side, or watch a demo first.",
+ t_demo:"Demo · scripted example", t_live:"Teaching session",
+ t_meta:"{0} min · {1} student messages · own rating {2} → {3} of 5 · {4}", t_paste_none:"no pasted text", t_paste_some:"{0} with pasted text",
+ t_oral:"The student asked for a live conversation instead. Use this record as preparation.", t_note:"Student's note:",
+ t_score_each:"Review each stage", t_blind:"Hide AI suggestions until I score", t_sugg:"suggested {0}/4", t_hidden:"suggestion hidden", t_score:"Score",
+ t_src_demo:"In the demo the quotes and suggested levels are scripted.", t_src_ai:"Quotes and suggested levels come from the AI.", t_read:"Read the conversation before you agree with them.",
+ t_fb:"Feedback to the student", t_fb_ph:"For example: strong correction of Nova; revisit how you estimate the number of steps.",
+ t_approved:"Approved and released. You matched the suggestion on {0} of 5 stages.", t_ready:"Nothing reaches the student until you approve.", t_need:"Score all five stages to approve.",
+ t_approve:"Approve and release", t_update:"Update", t_keys:"Key ideas and where they were found",
+ approved:"approved", to_review:"to review", oral_req:"conversation requested", demo:"demo",
+ set_intro:"You decide what counts as understanding. Students read the material; they never see the key ideas. Nova starts out believing the misconceptions.",
+ set_topic:"Topic", set_title:"Title", set_course:"Course", set_mat:"Material students read first, one paragraph per line",
+ set_keys:"Key ideas, one per line", set_mis:"Nova's misconceptions, one per line", set_scen:"Case for the Demonstrate stage",
+ save:"Save", new_topic:"New topic", saved:"Saved",
+ set_note:"Saved in this browser only. No login in this prototype, so anyone can open the educator view.",
+ skipped:"Stage skipped by the student", practice_label:"Practice", who_s:"STUDENT", who_n:"NOVA", mic_on:"Stop listening", mic_off:"Speak instead of typing"
+},
+ru:{
+ role_teacher:"Режим преподавателя", role_student:"Режим студента", ai_conn:"Подключение…", ai_live:"ИИ подключён", ai_demo:"Демо-режим",
+ h1:"Объясняйте. Находите заблуждения. Понимайте глубже.",
+ sub:"Учебная «песочница» с ИИ. Прочитайте материал и объясните его Нове — ИИ-новичку, которая задаёт вопросы и никогда не подсказывает ответ. Вы получаете обратную связь с цитатами из вашего объяснения; оценивание остаётся за преподавателем.",
+ demos_label:"Демо · сценарии написаны заранее, живой ИИ не нужен", live_label:"Или начните живую сессию",
+ d_bs:"сильная попытка · на английском", d_sd:"сильная попытка · на русском", d_rec:"слабая попытка · на английском",
+ no_ai:"Живой ИИ в этом режиме недоступен, поэтому здесь работают только демо.",
+ how_sum:"Как это работает и что реально в прототипе",
+ how1:"Объясняете только вы. Нова никогда не даёт ответов.",
+ how2:"ИИ играет роль Новы, а затем даёт обратную связь с цитатами из вашего объяснения. Всё, что написал ИИ, помечено.",
+ how3:"Преподаватель задаёт ключевые идеи, проверяет обратную связь ИИ и сохраняет право на итоговую оценку.",
+ how4:"Уже работает: живой диалог из пяти этапов, обратная связь с цитатами, проверка преподавателем, настройка тем, интерфейс на английском, русском и казахском. Голосовой ввод и озвучивание — только там, где это позволяет браузер.",
+ how5:"Пока не сделано: учётные записи, связь с LMS, центральное хранилище (записи остаются в этом браузере), аналитика.",
+ s_learn:"Изучить", s_teach:"Объяснить", s_result:"Обратная связь",
+ rate_pre:"Насколько хорошо вы могли бы объяснить это новичку прямо сейчас? (1 — совсем нет, 5 — полностью)",
+ start:"Готов(а) объяснять", practice:"Тренировка: с подсказками, ничего не передаётся",
+ no_mat:"Преподаватель ещё не добавил материал по этой теме. Используйте свой конспект.",
+ leave:"Выйти", ph:"Объясните это Нове…", play:"Воспроизвести", pause:"Пауза", next_msg:"Следующее сообщение", finish:"Завершить", skip_res:"Перейти к обратной связи",
+ demo_tag:"Демо · сценарий, не живой ИИ", tts_off:"Озвучивать Нову: выкл.", tts_on:"Озвучивать Нову: вкл.",
+ next_stage:"Следующий этап", skip_stage:"Пропустить этап", skip_finish:"Пропустить и завершить", stage_of:"{0} из 5",
+ st0:"Объяснить", st1:"Показать", st2:"Исправить", st3:"Обосновать", st4:"Создать",
+ g0:"Объясните понятие простым языком, на примере из жизни.",
+ g1:"Покажите Нове, как применить это на практике, шаг за шагом.",
+ g2:"Нова в чём-то заблуждается. Найдите ошибку и объясните, почему это неверно.",
+ g3:"Сравните два утверждения и обоснуйте своё решение.",
+ g4:"Придумайте свой пример и проверьте, как с ним справится Нова.",
+ nova_ai:"Нова · ИИ", nova_script:"Нова · сценарий", pasted:"вставлено символов: {0}",
+ no_live:"Живой ИИ здесь недоступен. Откройте демо на стартовой странице.",
+ err_grant:"Доступ к ИИ в этом режиме не разрешён.", err_rate:"Слишком много запросов. Подождите несколько секунд и отправьте снова.", err_other:"Нова не смогла ответить. Попробуйте отправить ещё раз.",
+ ai_tip:"Подсказка ИИ", check:"Проверьте", collecting:"Готовим обратную связь по вашему объяснению…",
+ res_practice_h:"Тренировка завершена. Ничего не передано.", res_sent_h:"Ваша обратная связь.",
+ res_sent_p:"Обратная связь ИИ — повод для размышления, а не объективный диагноз. Она передана преподавателю, который проверяет её и сохраняет право на оценку.",
+ res_score_by:"проверено преподавателем",
+ rate_post:"Теперь, после объяснения, насколько хорошо вы это понимаете?", rate_before:"До этого вы поставили {0} из 5.",
+ rate_lower:"Ниже, чем раньше. Это нормально: объяснение показывает пробелы, которые незаметны при чтении.",
+ ev_label:"Обратная связь с цитатами", ev_label_demo:"Обратная связь с цитатами (сценарий демо)", ai_sugg:"ИИ · предложение",
+ next_step:"Следующий шаг", no_notes:"Нет обратной связи", keys_label:"Ключевые идеи, заданные преподавателем", not_found:"(не найдено)",
+ note_label:"Комментарий преподавателю (необязательно)", note_ph:"Что преподавателю стоит знать",
+ oral:"Я хочу вместо этого лично побеседовать с преподавателем",
+ to_teacher:"Посмотреть со стороны преподавателя", again:"Попробовать ещё раз", home:"На главную", full_conv:"Весь диалог",
+ lv0:"Не показано", lv1:"Начальный", lv2:"Развивающийся", lv3:"Уверенный", lv4:"Сильный",
+ t_title:"Преподаватель", t_review:"Проверка", t_topics:"Темы",
+ t_empty:"Пока нечего проверять. Завершите сессию в режиме студента или сначала посмотрите демо.",
+ t_demo:"Демо · сценарий", t_live:"Учебная сессия",
+ t_meta:"{0} мин · сообщений студента: {1} · самооценка {2} → {3} из 5 · {4}", t_paste_none:"без вставленного текста", t_paste_some:"со вставленным текстом: {0}",
+ t_oral:"Студент попросил вместо этого личную беседу. Используйте запись для подготовки.", t_note:"Комментарий студента:",
+ t_score_each:"Проверьте каждый этап", t_blind:"Скрыть предложения ИИ, пока я не оценю", t_sugg:"предложено {0}/4", t_hidden:"предложение скрыто", t_score:"Оценка",
+ t_src_demo:"В демо цитаты и предложенные уровни написаны заранее.", t_src_ai:"Цитаты и предложенные уровни сформированы ИИ.", t_read:"Прочитайте диалог, прежде чем соглашаться.",
+ t_fb:"Обратная связь студенту", t_fb_ph:"Например: хорошо исправлена ошибка Новы; вернитесь к оценке числа шагов.",
+ t_approved:"Утверждено и отправлено. Вы согласились с предложением на {0} из 5 этапов.", t_ready:"Студент ничего не увидит, пока вы не утвердите.", t_need:"Оцените все пять этапов, чтобы утвердить.",
+ t_approve:"Утвердить и отправить", t_update:"Обновить", t_keys:"Ключевые идеи и где они найдены",
+ approved:"утверждено", to_review:"на проверке", oral_req:"запрошена беседа", demo:"демо",
+ set_intro:"Вы решаете, что считать пониманием. Студенты читают материал, но не видят ключевые идеи. Нова изначально верит в заблуждения.",
+ set_topic:"Тема", set_title:"Название", set_course:"Курс", set_mat:"Материал, который студенты читают сначала; один абзац в строке",
+ set_keys:"Ключевые идеи, по одной в строке", set_mis:"Заблуждения Новы, по одному в строке", set_scen:"Задача для этапа «Показать»",
+ save:"Сохранить", new_topic:"Новая тема", saved:"Сохранено",
+ set_note:"Сохраняется только в этом браузере. В прототипе нет входа, поэтому режим преподавателя открыт всем.",
+ skipped:"Этап пропущен студентом", practice_label:"Тренировка", who_s:"СТУДЕНТ", who_n:"НОВА", mic_on:"Остановить запись", mic_off:"Говорить вместо набора"
+},
+kk:{
+ role_teacher:"Оқытушы режимі", role_student:"Студент режимі", ai_conn:"Қосылуда…", ai_live:"ЖИ қосылды", ai_demo:"Демо режимі",
+ h1:"Түсіндіріңіз. Қате түсініктерді табыңыз. Тереңірек түсініңіз.",
+ sub:"ЖИ көмегімен оқыту алаңы. Материалды оқып, оны Новаға түсіндіріңіз — ол сұрақ қоятын, бірақ жауапты ешқашан айтпайтын жаңадан үйренуші ЖИ. Сіз өз түсіндірмеңізден алынған дәйексөздері бар кері байланыс аласыз; бағалау оқытушының қолында қалады.",
+ demos_label:"Демо · сценарийлер алдын ала жазылған, тікелей ЖИ қажет емес", live_label:"Немесе тікелей сессияны бастаңыз",
+ d_bs:"мықты әрекет · ағылшын тілінде", d_sd:"мықты әрекет · орыс тілінде", d_rec:"әлсіз әрекет · ағылшын тілінде",
+ no_ai:"Бұл режимде тікелей ЖИ қолжетімсіз, сондықтан мұнда тек демо жұмыс істейді.",
+ how_sum:"Бұл қалай жұмыс істейді және прототипте не нақты бар",
+ how1:"Түсіндіретін тек сіз. Нова ешқашан жауап бермейді.",
+ how2:"ЖИ Нованың рөлін ойнайды, содан кейін түсіндірмеңізден дәйексөз келтіріп кері байланыс береді. ЖИ жазғанның бәрі белгіленген.",
+ how3:"Оқытушы негізгі идеяларды белгілейді, ЖИ кері байланысын тексереді және ресми бағалау құқығын сақтайды.",
+ how4:"Қазір жұмыс істейді: бес кезеңнен тұратын тікелей диалог, дәйексөзді кері байланыс, оқытушының тексеруі, тақырыптарды баптау, ағылшын, орыс және қазақ тілдеріндегі интерфейс. Дауыспен енгізу және дауыстап оқу — тек браузер рұқсат еткен жерде.",
+ how5:"Әлі жасалмаған: тіркелгілер, LMS байланысы, орталық сақтау (жазбалар осы браузерде қалады), аналитика.",
+ s_learn:"Оқу", s_teach:"Түсіндіру", s_result:"Кері байланыс",
+ rate_pre:"Дәл қазір мұны жаңадан үйренушіге қаншалықты жақсы түсіндіре алар едіңіз? (1 — мүлдем жоқ, 5 — толық)",
+ start:"Түсіндіруге дайынмын", practice:"Жаттығу: кеңестермен, ештеңе жіберілмейді",
+ no_mat:"Оқытушы бұл тақырып бойынша материал әлі қоспаған. Дәріс конспектіңізді пайдаланыңыз.",
+ leave:"Шығу", ph:"Мұны Новаға түсіндіріңіз…", play:"Ойнату", pause:"Кідірту", next_msg:"Келесі хабар", finish:"Аяқтау", skip_res:"Кері байланысқа өту",
+ demo_tag:"Демо · сценарий, тікелей ЖИ емес", tts_off:"Нованы дауыстап оқу: өшірулі", tts_on:"Нованы дауыстап оқу: қосулы",
+ next_stage:"Келесі кезең", skip_stage:"Кезеңді өткізіп жіберу", skip_finish:"Өткізіп, аяқтау", stage_of:"5-тен {0}",
+ st0:"Түсіндіру", st1:"Көрсету", st2:"Түзету", st3:"Негіздеу", st4:"Құрастыру",
+ g0:"Ұғымды қарапайым тілмен, өмірден алынған мысалмен түсіндіріңіз.",
+ g1:"Новаға мұны іс жүзінде қалай қолдануды қадам-қадаммен көрсетіңіз.",
+ g2:"Нова бір нәрсені қате түсінеді. Қатені тауып, неге дұрыс емес екенін түсіндіріңіз.",
+ g3:"Екі пікірді салыстырып, өз шешіміңізді дәлелдеңіз.",
+ g4:"Өз мысалыңызды ойлап тауып, Нованың оны қалай орындағанын тексеріңіз.",
+ nova_ai:"Нова · ЖИ", nova_script:"Нова · сценарий", pasted:"қойылған таңба саны: {0}",
+ no_live:"Тікелей ЖИ мұнда қолжетімсіз. Бастапқы беттен демоны ашыңыз.",
+ err_grant:"Бұл режимде ЖИ-ге қол жеткізуге рұқсат берілмеген.", err_rate:"Сұраныс тым көп. Бірнеше секунд күтіп, қайта жіберіңіз.", err_other:"Нова жауап бере алмады. Қайта жіберіп көріңіз.",
+ ai_tip:"ЖИ кеңесі", check:"Тексеріңіз", collecting:"Түсіндірмеңіз бойынша кері байланыс дайындалуда…",
+ res_practice_h:"Жаттығу аяқталды. Ештеңе жіберілген жоқ.", res_sent_h:"Сіздің кері байланысыңыз.",
+ res_sent_p:"ЖИ кері байланысы — ойлануға түрткі, объективті диагноз емес. Ол оқытушыға жіберілді; оқытушы оны тексереді және бағалау құқығын сақтайды.",
+ res_score_by:"оқытушы тексерген",
+ rate_post:"Енді, түсіндіргеннен кейін, мұны қаншалықты жақсы түсінесіз?", rate_before:"Бұған дейін сіз 5-тен {0} қойдыңыз.",
+ rate_lower:"Бұрынғыдан төмен. Бұл қалыпты: түсіндіру оқу кезінде байқалмайтын олқылықтарды көрсетеді.",
+ ev_label:"Дәйексөзді кері байланыс", ev_label_demo:"Дәйексөзді кері байланыс (демо сценарийі)", ai_sugg:"ЖИ · ұсыныс",
+ next_step:"Келесі қадам", no_notes:"Кері байланыс жоқ", keys_label:"Оқытушы белгілеген негізгі идеялар", not_found:"(табылмады)",
+ note_label:"Оқытушыға ескертпе (міндетті емес)", note_ph:"Оқытушы білуі тиіс нәрсе",
+ oral:"Мұның орнына оқытушымен жеке сөйлескім келеді",
+ to_teacher:"Оқытушы жағынан қарау", again:"Қайта көру", home:"Басты бетке", full_conv:"Толық диалог",
+ lv0:"Көрсетілмеген", lv1:"Бастапқы", lv2:"Дамып келе жатқан", lv3:"Сенімді", lv4:"Мықты",
+ t_title:"Оқытушы", t_review:"Тексеру", t_topics:"Тақырыптар",
+ t_empty:"Әзірге тексеретін ештеңе жоқ. Студент режимінде сессияны аяқтаңыз немесе алдымен демоны қараңыз.",
+ t_demo:"Демо · сценарий", t_live:"Оқыту сессиясы",
+ t_meta:"{0} мин · студент хабарлары: {1} · өзін-өзі бағалау {2} → {3} (5-тен) · {4}", t_paste_none:"қойылған мәтін жоқ", t_paste_some:"қойылған мәтіні бар: {0}",
+ t_oral:"Студент мұның орнына жеке әңгімені сұрады. Бұл жазбаны дайындық ретінде пайдаланыңыз.", t_note:"Студенттің ескертпесі:",
+ t_score_each:"Әр кезеңді тексеріңіз", t_blind:"Мен бағалағанша ЖИ ұсыныстарын жасыру", t_sugg:"ұсынылған {0}/4", t_hidden:"ұсыныс жасырылған", t_score:"Баға",
+ t_src_demo:"Демода дәйексөздер мен ұсынылған деңгейлер алдын ала жазылған.", t_src_ai:"Дәйексөздер мен ұсынылған деңгейлерді ЖИ жасаған.", t_read:"Келіспес бұрын диалогты оқып шығыңыз.",
+ t_fb:"Студентке кері байланыс", t_fb_ph:"Мысалы: Нованың қатесі жақсы түзетілді; қадамдар санын бағалауды қайта қараңыз.",
+ t_approved:"Бекітіліп, жіберілді. Сіз 5 кезеңнің {0}-інде ұсыныспен келістіңіз.", t_ready:"Сіз бекіткенше студент ештеңе көрмейді.", t_need:"Бекіту үшін бес кезеңнің бәрін бағалаңыз.",
+ t_approve:"Бекіту және жіберу", t_update:"Жаңарту", t_keys:"Негізгі идеялар және олар қай жерден табылды",
+ approved:"бекітілді", to_review:"тексеруде", oral_req:"әңгіме сұралды", demo:"демо",
+ set_intro:"Нені түсіну деп санауды сіз шешесіз. Студенттер материалды оқиды, бірақ негізгі идеяларды көрмейді. Нова бастапқыда қате түсініктерге сенеді.",
+ set_topic:"Тақырып", set_title:"Атауы", set_course:"Курс", set_mat:"Студенттер алдымен оқитын материал; әр жолда бір абзац",
+ set_keys:"Негізгі идеялар, әр жолда біреуден", set_mis:"Нованың қате түсініктері, әр жолда біреуден", set_scen:"«Көрсету» кезеңіне арналған тапсырма",
+ save:"Сақтау", new_topic:"Жаңа тақырып", saved:"Сақталды",
+ set_note:"Тек осы браузерде сақталады. Прототипте кіру жоқ, сондықтан оқытушы режимі бәріне ашық.",
+ skipped:"Кезеңді студент өткізіп жіберді", practice_label:"Жаттығу", who_s:"СТУДЕНТ", who_n:"НОВА", mic_on:"Тыңдауды тоқтату", mic_off:"Терудің орнына сөйлеу"
+}};
+let lang = load("tb_lang"); if(!I[lang]) lang = "en";
+function t(k){ let s = (I[lang] && I[lang][k]) || I.en[k] || k; for(let i=1;i<arguments.length;i++) s = s.replace("{"+(i-1)+"}", arguments[i]); return s; }
+function applyText(){
+  document.documentElement.lang = lang;
+  $$("[data-t]").forEach(el => { el.textContent = t(el.dataset.t); });
+  $$("[data-t-ph]").forEach(el => { el.placeholder = t(el.dataset.tPh); });
+  $$(".langs button").forEach(b => b.setAttribute("aria-pressed", b.dataset.lang===lang));
+}
 
 /* ---------- data ---------- */
 const DEFAULT_TOPICS = [
@@ -281,18 +472,17 @@ const DEFAULT_TOPICS = [
    scen:"You have a final exam in 3 weeks. Design a study plan using spaced repetition."}
 ];
 const STAGES = [
-  {name:"Explain", bloom:"Understand", goal:"Explain it in plain words, with an everyday example.",
+  {name:"Explain", bloom:"Understand", goal:"Explain the concept in plain language, with an everyday example.",
    nova:"Ask the learner to explain the topic in simple words. When they use any technical word, say you don't know it and ask what it means. Ask for an everyday example."},
-  {name:"Apply", bloom:"Apply", goal:"Walk Nova through a real case, step by step.",
+  {name:"Demonstrate", bloom:"Apply", goal:"Show how to apply the concept in practice, step by step.",
    nova:"Give the learner this concrete case and ask them to walk you through solving it step by step: {SCEN}. Ask 'and then what?' if steps are missing."},
-  {name:"Analyze", bloom:"Analyze", goal:"Nova believes something wrong. Find it and explain why.",
+  {name:"Correct", bloom:"Analyze", goal:"Identify and correct Nova's misconception, explaining why it is wrong.",
    nova:"Confidently state this misconception as your own belief and ask if you got it right: \"{MIS}\". Only change your mind if the learner explains WHY it is wrong, not just that it is wrong."},
-  {name:"Evaluate", bloom:"Evaluate", goal:"Judge between two claims and say how you can tell.",
+  {name:"Justify", bloom:"Evaluate", goal:"Compare alternative approaches and defend a reasoned judgement.",
    nova:"Tell the learner that your friend made a different claim about the topic (invent a plausible but partly flawed claim, or a comparison between two approaches) and ask who is right and how they can tell. Push for criteria."},
-  {name:"Create", bloom:"Create", goal:"Invent your own example, then check Nova's attempt at it.",
+  {name:"Design", bloom:"Create", goal:"Create an original example, problem or model and explain how it works.",
    nova:"Ask the learner to make up their own new example, problem or analogy about the topic. When they do, try to solve or use it yourself as a beginner (make one small, realistic mistake) and ask if you got it right."}
 ];
-const LEVEL = ["Not shown","Beginning","Developing","Secure","Strong"];
 const LEVEL_DESC = [
   "Nothing relevant, or the stage was skipped",
   "Mostly inaccurate, or repeats terms without explaining them",
@@ -301,8 +491,11 @@ const LEVEL_DESC = [
   "Correct and complete, in the learner's own words, and holds up under Nova's questions"
 ];
 
-/* demo: written in advance by the team, never generated live */
-const EX = {pre:4, post:3, steps:[
+/* demos: written in advance by the team, never generated live */
+const DEMOS = [
+{id:"bs", tag:"d_bs", topic:DEFAULT_TOPICS[0], pre:4, post:3,
+ note:"I first said 10 steps in the Demonstrate stage, then corrected myself. I hope the correction counts.",
+ steps:[
  {s:0,w:"nova",t:"Hi! I keep hearing about binary search but I have no idea what it is. Can you explain it like I'm completely new?"},
  {s:0,w:"me",t:"It is an algorithm that finds an element in a sorted array in logarithmic time."},
  {s:0,w:"nova",t:"Sorry, you lost me. What does \"sorted\" mean here, and what is \"logarithmic time\"? Can you show me with something from everyday life?"},
@@ -318,7 +511,7 @@ const EX = {pre:4, post:3, steps:[
    evidence:"Walked through the case and corrected the step count: “2 to the power 20 is about a million, so at most about 20 steps”.",tip:"Check your estimate with a small case first, for example 8 names."}},
  {s:2,w:"nova",t:"I think I've got it! So binary search works on any list, even if the names are all mixed up, right?"},
  {s:2,w:"me",t:"No. If the names are mixed up, looking at the middle tells you nothing. In a sorted book, when the middle name is before Nurlan, I know for sure everything before it is also before Nurlan. In a mixed list Nurlan could be anywhere, so I cannot drop any half. I would have to sort it first or check one by one.",
-  coach:{score:4,covered:{},errors:[],evidence:"Explained why, not only that: “In a mixed list Nurlan could be anywhere, so I cannot drop any half.”",tip:"Now compare the cost of sorting first with just checking one by one."}},
+  coach:{score:4,covered:{},errors:[],evidence:"Explained why, not only that: “In a mixed list Nurlan could be anywhere, so I cannot drop any half.”",tip:"Compare the cost of sorting first with just checking one by one."}},
  {s:2,w:"nova",t:"Ahh. So throwing half away only works because the order tells me which side to keep. I take it back."},
  {s:3,w:"nova",t:"My friend Dana says binary search is always better than checking one by one. Is she right? How can I tell?"},
  {s:3,w:"me",t:"Not always. I would look at three things: is the list sorted, how big is it, and how often do I search. For 5 names, checking one by one is just as fast. If the list is not sorted and I search only once, sorting first costs more than just checking each name. For a big sorted list that I search many times, binary search wins by far.",
@@ -330,55 +523,121 @@ const EX = {pre:4, post:3, steps:[
  {s:4,w:"me",t:"Almost. Your first guess was right, but after \"higher\" the numbers left are 51 to 100, and the middle is 75, not 60. Going up by ten can take many more guesses. Always pick the middle of what is left, then 7 guesses are always enough.",
   coach:{score:4,covered:{},errors:[],evidence:"Invented a guessing game and caught Nova's mistake: “the middle is 75, not 60”.",tip:"Explain why 7 guesses are enough for 100 numbers."}},
  {s:4,w:"nova",t:"Oh, I see my mistake. I was stepping forward instead of cutting the rest in half."}
-]};
+]},
+{id:"sd", tag:"d_sd", pre:3, post:4, note:"",
+ topic:{id:"demo-sd", title:"Спрос и предложение", course:"Введение в экономику",
+  mat:["Когда цена товара растёт, покупатели хотят купить его меньше: кривая спроса идёт вниз.","Когда цена растёт, продавцы готовы предложить больше: кривая предложения идёт вверх.","Равновесие — это цена, при которой покупатели хотят купить столько же, сколько продавцы хотят продать.","Изменение цены самого товара — это движение вдоль кривой. Изменение любого другого фактора (доходы, погода, издержки) сдвигает всю кривую и создаёт новое равновесие."],
+  keys:["Спрос падает, когда цена растёт","Предложение растёт, когда цена растёт","Равновесие — там, где объём спроса равен объёму предложения","Изменение цены — движение вдоль кривой; другие факторы сдвигают кривую"],
+  mis:["Когда цена товара растёт, вся кривая спроса сдвигается влево","Равновесие означает, что цена никогда не меняется"],
+  scen:"Из-за засухи в Казахстане собрали мало пшеницы. Что будет с ценой на хлеб и почему?"},
+ steps:[
+ {s:0,w:"nova",t:"Привет! Я всё время слышу «спрос и предложение», но не понимаю, что это. Объяснишь по-простому?"},
+ {s:0,w:"me",t:"Это модель рыночного равновесия, где цена определяется пересечением кривых."},
+ {s:0,w:"nova",t:"Ой, я запуталась. Что такое «кривые» и «равновесие»? Можно на примере из жизни?"},
+ {s:0,w:"me",t:"Возьмём яблоки на базаре. Если яблоки дорогие, люди покупают их меньше — это спрос. А продавцам, наоборот, выгодно привезти больше, когда цена высокая — это предложение. Равновесие — это цена, при которой покупатели хотят купить ровно столько, сколько продавцы хотят продать.",
+  coach:{score:3,covered:{0:"Если яблоки дорогие, люди покупают их меньше",1:"продавцам выгодно привезти больше, когда цена высокая",2:"покупатели хотят купить ровно столько, сколько продавцы хотят продать"},errors:[],
+   evidence:"Начал с терминов, затем объяснил на примере базара: «покупатели хотят купить ровно столько, сколько продавцы хотят продать».",tip:"Объясните, что произойдёт, если цена окажется выше равновесной."}},
+ {s:0,w:"nova",t:"А, то есть цена как бы «договаривается» между покупателями и продавцами?"},
+ {s:1,w:"nova",t:"Давай проверим. Из-за засухи в Казахстане собрали мало пшеницы. Что будет с ценой на хлеб и почему?"},
+ {s:1,w:"me",t:"Пшеницы стало меньше, значит, при любой цене продавцы могут предложить меньше муки и хлеба — предложение сократилось. Хлеб нужен людям так же, как раньше, поэтому при старой цене его не хватит всем. Цена будет расти, пока спрос и предложение снова не сравняются.",
+  coach:{score:4,covered:{},errors:[],evidence:"Прошёл задачу по шагам: «при старой цене его не хватит всем. Цена будет расти, пока спрос и предложение снова не сравняются».",tip:"Скажите, что произойдёт с количеством проданного хлеба."}},
+ {s:1,w:"nova",t:"Понятно: хлеба меньше, желающих столько же — цена растёт."},
+ {s:2,w:"nova",t:"Кажется, я поняла! Раз хлеб подорожал, значит, спрос на хлеб упал — вся кривая спроса сдвинулась влево, да?"},
+ {s:2,w:"me",t:"Нет, тут легко перепутать. Люди покупают меньше хлеба, потому что он подорожал, — это движение вдоль той же кривой спроса. Сама кривая не сдвинулась: желания и доходы людей остались прежними. Кривая спроса сдвигается, когда меняется что-то кроме цены самого товара, например доходы. А здесь сдвинулась кривая предложения — из-за засухи.",
+  coach:{score:4,covered:{3:"это движение вдоль той же кривой спроса … Кривая спроса сдвигается, когда меняется что-то кроме цены самого товара"},errors:[],
+   evidence:"Объяснил причину, а не только факт: «это движение вдоль той же кривой спроса. Сама кривая не сдвинулась».",tip:"Приведите пример, когда сдвигается именно кривая спроса."}},
+ {s:2,w:"nova",t:"То есть «покупают меньше» и «спрос упал» — это разные вещи. Беру свои слова назад."},
+ {s:3,w:"nova",t:"Мой друг Арман говорит: если государство запретит поднимать цену на хлеб, всем будет лучше. Он прав? Как понять?"},
+ {s:3,w:"me",t:"Не совсем. Я бы смотрел на два критерия: хватит ли хлеба всем и что будет с продавцами. При замороженной низкой цене покупатели хотят купить больше, а продавцам невыгодно печь столько же, поэтому возникает дефицит и очереди. Тем, кто успел купить, хорошо, остальным — нет. На короткий срок это может помочь, но нехватку пшеницы не решает.",
+  coach:{score:3,covered:{},errors:[],evidence:"Назвал два критерия и применил их: «возникает дефицит и очереди. Тем, кто успел купить, хорошо, остальным — нет».",tip:"Сравните запрет с другой мерой, например адресной помощью."}},
+ {s:3,w:"nova",t:"Значит, цена ниже, но хлеба на всех не хватит. Арман прав только наполовину."},
+ {s:4,w:"nova",t:"А можешь придумать свой пример, чтобы я попробовала сама?"},
+ {s:4,w:"me",t:"Пример: зимой в Астане резко похолодало. Что будет с ценой на тёплые куртки?"},
+ {s:4,w:"nova",t:"Сейчас попробую. Стало холодно, значит, продавцы привезут меньше курток, предложение упадёт, и цена вырастет. Правильно?"},
+ {s:4,w:"me",t:"Цена вырастет, но причина другая. Курток у продавцов столько же, предложение не менялось. Из-за холода больше людей хотят купить куртку при любой цене — это сдвиг спроса вправо. Спрос вырос, предложение прежнее, поэтому растут и цена, и продажи.",
+  coach:{score:4,covered:{},errors:[],evidence:"Придумал свой пример и нашёл ошибку Новы: «предложение не менялось … это сдвиг спроса вправо».",tip:"Объясните, что будет с ценой весной."}},
+ {s:4,w:"nova",t:"Точно, я перепутала, какая кривая сдвинулась. Изменилось желание покупателей, а не количество курток."}
+]},
+{id:"rec", tag:"d_rec", topic:DEFAULT_TOPICS[1], pre:4, post:2, note:"",
+ steps:[
+ {s:0,w:"nova",t:"Hi! Everyone in my class talks about recursion. What is it?"},
+ {s:0,w:"me",t:"Recursion is when a function calls itself."},
+ {s:0,w:"nova",t:"A function calls itself… but then doesn't it just go on forever? How does it ever stop?"},
+ {s:0,w:"me",t:"It stops when it is done. The computer knows.",
+  coach:{score:1,covered:{0:"a function calls itself"},errors:["Could not say what stops the recursion"],
+   evidence:"Gave the definition only: “a function calls itself”. On how it stops: “The computer knows.”",tip:"Re-read what makes a recursive function stop, then explain it with a small example."}},
+ {s:0,w:"nova",t:"Hmm. I still don't see how the computer knows when it is done."},
+ {s:1,w:"nova",t:"Can you show me with the factorial of 4? Walk me through every call."},
+ {s:1,w:"me",t:"factorial(4) is 4 times 3 times 2 times 1, so 24."},
+ {s:1,w:"nova",t:"That is the answer, but where does the function call itself? What does factorial(4) ask for first?"},
+ {s:1,w:"me",t:"It calls factorial(3), and that calls factorial(2), and so on, and then you multiply everything.",
+  coach:{score:2,covered:{2:"It calls factorial(3), and that calls factorial(2)"},errors:["Never said where the calls stop"],
+   evidence:"Showed the chain of calls: “It calls factorial(3), and that calls factorial(2), and so on”, without saying where it ends.",tip:"Finish the chain: which call returns a value without calling again?"}},
+ {s:2,w:"nova",t:"Got it! So for a small number like 4 you don't even need a stopping rule, right? It is only four steps."},
+ {s:2,w:"me",t:"Yes, for small numbers it is fine.",
+  coach:{score:1,covered:{},errors:["Agreed with Nova's misconception that a stopping rule is optional for small inputs"],
+   evidence:"Accepted the wrong belief: “Yes, for small numbers it is fine.”",tip:"Trace factorial(1) with no stopping rule. What does it call next?"}},
+ {s:2,w:"nova",t:"Great, so no stopping rule for small inputs. That is what I thought."},
+ {s:3,w:"nova",t:"My friend says a loop is always better than recursion. Is she right? How can I tell?"},
+ {s:3,w:"me",t:"I think loops are easier, so yes.",
+  coach:{score:1,covered:{},errors:[],evidence:"Stated a preference with no criteria: “I think loops are easier, so yes.”",tip:"Name two things you would compare, for example readability and memory use."}},
+ {s:3,w:"nova",t:"Okay… but easier for whom, and for which problems?"},
+ {s:4,skip:true}
+]}
+];
 
 let topics = load("tb3_topics") || JSON.parse(JSON.stringify(DEFAULT_TOPICS));
-let subs = load("tb3_subs") || [];
+let subs = load("tb4_subs") || [];
 let S = null, role = "student", screen = "home", tTab = "review", reviewId = null, blind = false;
 let sample = null, aiKnown = false, dict = null, tts = null, ttsOn = false, busy = false, pasted = 0;
 let aiResolve; const aiReady = new Promise(r => aiResolve = r);
 
 /* ---------- navigation ---------- */
 function show(){
+  applyText();
   $$(".view").forEach(v => v.classList.remove("on"));
-  $("#roleBtn").textContent = role==="teacher" ? "Student view" : "Teacher view";
+  $("#roleBtn").textContent = t(role==="teacher" ? "role_student" : "role_teacher");
   $("#wrap").classList.toggle("wide", role==="teacher");
+  setStatus();
   if(role==="teacher"){ renderTeacher(); $("#v-teacher").classList.add("on"); return; }
   if(screen==="home") renderHome();
+  if(screen==="learn") renderLearn();
+  if(screen==="teach") renderTeachText();
   if(screen==="result") renderResult();
   $("#v-"+screen).classList.add("on");
-  window.scrollTo(0,0);
 }
-$("#roleBtn").addEventListener("click", () => { role = role==="teacher" ? "student" : "teacher"; show(); });
+$("#roleBtn").addEventListener("click", () => { role = role==="teacher" ? "student" : "teacher"; show(); window.scrollTo(0,0); });
 $("#brand").addEventListener("click", leave);
-function leave(){ stopPlay(); S = null; busy = false; setBusy(); if(tts) try{ tts.stop(); }catch(e){} role = "student"; screen = "home"; show(); }
+$$(".langs button").forEach(b => b.addEventListener("click", () => { lang = b.dataset.lang; save("tb_lang", lang); show(); }));
+function leave(){ stopPlay(); S = null; busy = false; setBusy(); if(tts) try{ tts.stop(); }catch(e){} role = "student"; screen = "home"; show(); window.scrollTo(0,0); }
 
 /* ---------- home ---------- */
 function renderHome(){
   const off = aiKnown && !sample;
   $("#noAI").hidden = !off;
-  $("#topicList").innerHTML = topics.map(t => `<button class="topic" data-id="${esc(t.id)}" ${off?"disabled":""}><b>${esc(t.title)}</b><span>${esc(t.course||"")}</span></button>`).join("");
-  $$(".topic").forEach(el => el.addEventListener("click", () => openTopic(topics.find(t => t.id===el.dataset.id), false)));
+  $("#demoList").innerHTML = DEMOS.map(d => `<button class="topic" data-demo="${d.id}"><b>${esc(d.topic.title)}</b><span>${esc(t(d.tag))}</span></button>`).join("");
+  $$("[data-demo]").forEach(el => el.addEventListener("click", () => { const d = DEMOS.find(x => x.id===el.dataset.demo); openTopic(d.topic, d); }));
+  $("#topicList").innerHTML = topics.map(tp => `<button class="topic" data-id="${esc(tp.id)}" ${off?"disabled":""}><b>${esc(tp.title)}</b><span>${esc(tp.course||"")}</span></button>`).join("");
+  $$("[data-id]").forEach(el => el.addEventListener("click", () => openTopic(topics.find(x => x.id===el.dataset.id), null)));
 }
-$("#demoGo").addEventListener("click", () => openTopic(DEFAULT_TOPICS[0], true));
-
 function newSession(topic, demo){
-  return {id: demo ? "demo" : "s"+Date.now(), topic:JSON.parse(JSON.stringify(topic)), mode:"assessed", scripted:!!demo, stage:0, msgs:[], results:[null,null,null,null,null],
-    covered:{}, pre:demo?EX.pre:null, post:demo?EX.post:null, startedAt:Date.now(), finishedAt:null, note:"", oral:false, pending:[],
+  return {id: demo ? "demo-"+demo.id : "s"+Date.now(), demo: demo ? demo.id : null, topic:JSON.parse(JSON.stringify(topic)), mode:"assessed", scripted:!!demo, stage:0, msgs:[], results:[null,null,null,null,null],
+    covered:{}, pre:demo?demo.pre:null, post:demo?demo.post:null, startedAt:Date.now(), finishedAt:null, note:"", oral:false, pending:[],
     mis: topic.mis.length ? topic.mis[Math.floor(Math.random()*topic.mis.length)] : "",
     teacher:{scores:{}, comment:"", approved:false}};
 }
-function scaleHTML(sel){ return [1,2,3,4,5].map(n => `<button type="button" data-n="${n}" aria-pressed="${sel===n}" aria-label="${n} of 5">${n}</button>`).join(""); }
+function demoOf(s){ return DEMOS.find(d => d.id===s.demo); }
+function scaleHTML(sel){ return [1,2,3,4,5].map(n => `<button type="button" data-n="${n}" aria-pressed="${sel===n}" aria-label="${n}/5">${n}</button>`).join(""); }
 
 /* ---------- learn ---------- */
-function openTopic(topic, demo){
-  S = newSession(topic, demo);
-  $("#lCourse").textContent = (demo ? "Demo · " : "") + (topic.course||"");
-  $("#lTitle").textContent = topic.title;
-  $("#lMaterial").innerHTML = (topic.mat && topic.mat.length ? topic.mat : ["Your teacher has not added material for this topic yet. Use your lecture notes."]).map(p => `<p>${esc(p)}</p>`).join("");
+function openTopic(topic, demo){ S = newSession(topic, demo); screen = "learn"; show(); window.scrollTo(0,0); }
+function renderLearn(){
+  const tp = S.topic;
+  $("#lCourse").textContent = (S.scripted ? t("demo")+" · " : "") + (tp.course||"");
+  $("#lTitle").textContent = tp.title;
+  $("#lMaterial").innerHTML = (tp.mat && tp.mat.length ? tp.mat : [t("no_mat")]).map(p => `<p>${esc(p)}</p>`).join("");
   $("#preScale").innerHTML = scaleHTML(S.pre);
-  $("#practiceBtn").hidden = !!demo;
-  screen = "learn"; show();
+  $("#practiceBtn").hidden = S.scripted;
 }
 $("#preScale").addEventListener("click", e => { const b = e.target.closest("button"); if(!b || !S) return; S.pre = +b.dataset.n; $("#preScale").innerHTML = scaleHTML(S.pre); });
 $("#startBtn").addEventListener("click", () => startTeach("assessed"));
@@ -390,51 +649,57 @@ function startTeach(mode){
   $("#msgs").innerHTML = ""; $("#tip").hidden = true;
   $("#composer").hidden = S.scripted; $("#demoBar").hidden = !S.scripted;
   $("#nextBtn").hidden = S.scripted;
-  $("#ttsBtn").hidden = !tts;
-  screen = "teach"; show();
+  screen = "teach"; show(); window.scrollTo(0,0);
   if(S.scripted){ exPos = 0; enterStage(0, false); exStep(); }
   else enterStage(0, true);
 }
 function learnerCount(i){ return S.msgs.filter(m => m.stage===i && m.who==="me").length; }
-function renderStage(){
+function renderTeachText(){
+  if(!S) return;
   $("#stageBar").innerHTML = STAGES.map((_,i) => `<span class="${i<S.stage?"done":i===S.stage?"cur":""}"></span>`).join("");
-  $("#stageName").textContent = `${S.stage+1} of 5 · ${STAGES[S.stage].name}`;
-  $("#stageGoal").textContent = STAGES[S.stage].goal;
+  $("#stageName").textContent = `${t("stage_of", S.stage+1)} · ${t("st"+S.stage)}`;
+  $("#stageGoal").textContent = t("g"+S.stage);
   const last = S.stage===4, said = learnerCount(S.stage) > 0;
-  $("#nextBtn").textContent = last ? (said ? "Finish" : "Skip and finish") : (said ? "Next stage" : "Skip stage");
+  $("#nextBtn").textContent = last ? (said ? t("finish") : t("skip_finish")) : (said ? t("next_stage") : t("skip_stage"));
   $("#nextBtn").className = "btn" + (said ? " primary" : "");
+  $("#ttsBtn").hidden = !tts; $("#ttsBtn").textContent = t(ttsOn ? "tts_on" : "tts_off");
+  $("#micBtn").title = t(listening ? "mic_on" : "mic_off");
+  $("#demoPlay").textContent = t(playTimer ? "pause" : "play");
+  const d = S.scripted ? demoOf(S) : null;
+  $("#demoNext").textContent = t(d && exPos >= d.steps.length ? "finish" : "next_msg");
 }
 function enterStage(i, live){
-  S.stage = i; renderStage();
-  sys(`${STAGES[i].name}: ${STAGES[i].goal}`);
+  S.stage = i; renderTeachText();
+  sys(`${t("st"+i)}: ${t("g"+i)}`);
   if(live) novaTurn(true);
 }
 function sys(text){ const d=document.createElement("div"); d.className="msg sys"; d.textContent=text; $("#msgs").appendChild(d); scroll(); return d; }
 function bubble(who, text, pf){
   const d=document.createElement("div"); d.className="msg "+who;
-  if(who==="nova"){ const w=document.createElement("span"); w.className="who"; w.textContent = S && S.scripted ? "Nova · scripted" : "Nova · AI"; d.appendChild(w); }
+  if(who==="nova"){ const w=document.createElement("span"); w.className="who"; w.textContent = t(S && S.scripted ? "nova_script" : "nova_ai"); d.appendChild(w); }
   const b=document.createElement("span"); b.className="body"; b.textContent=text; d.appendChild(b);
-  if(pf){ const s=document.createElement("span"); s.className="pf"; s.textContent=`${pf} characters pasted`; d.appendChild(s); }
+  if(pf){ const s=document.createElement("span"); s.className="pf"; s.textContent=t("pasted", pf); d.appendChild(s); }
   $("#msgs").appendChild(d); scroll(); return b;
 }
 function scroll(){ const m=$("#msgs"); m.scrollTop=m.scrollHeight; }
-function transcript(s){ return s.msgs.map(m => `${STAGES[m.stage].name} · ${m.who==="me"?"STUDENT":"NOVA"}${m.pasted?` [${m.pasted} characters pasted]`:""}: ${m.text}`).join("\n\n"); }
+function transcript(s){ return s.msgs.map(m => `${t("st"+m.stage)} · ${m.who==="me"?t("who_s"):t("who_n")}${m.pasted?` [${t("pasted", m.pasted)}]`:""}: ${m.text}`).join("\n\n"); }
 
 function novaPrompt(opening){
-  const st = STAGES[S.stage], t = S.topic;
+  const st = STAGES[S.stage], tp = S.topic;
   const mis = S.mis || "a common beginner misunderstanding of the topic";
-  const instr = st.nova.replace("{SCEN}", t.scen || "a realistic small task you invent").replace("{MIS}", mis);
-  return `You are role-playing NOVA, a curious, friendly first-year university student in Kazakhstan. The learner is teaching you the topic "${t.title}". Their explanation is being used as evidence of their own understanding.
+  const instr = st.nova.replace("{SCEN}", tp.scen || "a realistic small task you invent").replace("{MIS}", mis);
+  const uiLang = {en:"English", ru:"Russian", kk:"Kazakh"}[lang];
+  return `You are role-playing NOVA, a curious, friendly first-year university student in Kazakhstan. The learner is practising teaching: they teach you the topic "${tp.title}".
 
 RULES (strict):
 - You do NOT know this topic. Never explain it, never lecture, never give the correct answer or hints to it.
-- Your only beliefs about the topic are these misconceptions (the teacher chose them): ${t.mis.join("; ")||"none"}.
+- Your only beliefs about the topic are these misconceptions (the educator chose them): ${tp.mis.join("; ")||"none"}.
 - Keep replies short: 1 to 3 sentences, under 60 words. Sound like a real student. No lists, no markdown.
 - If the learner is vague, uses jargon, or skips steps, say honestly that you are confused and ask ONE specific question.
 - Prefer "why" and "how do you know" questions that make the learner reason, not only describe.
 - If the learner says something incorrect, do not correct it; ask a question that exposes the problem ("but then what happens if…?").
 - Do not flatter. Only say you understand when the explanation would really let a beginner understand.
-- Reply in the language the learner last used (Kazakh, Russian or English). If there is no learner message yet, use English.
+- Reply in the language the learner last used (Kazakh, Russian or English). If there is no learner message yet, use ${uiLang}.
 
 CURRENT STAGE ${S.stage+1}/5 (${st.name}): ${instr}
 ${opening ? "This stage has just started: write your opening message for it." : "Continue the conversation naturally within this stage."}
@@ -450,7 +715,7 @@ async function novaTurn(opening){
   const d = bubble("nova", "…");
   const ai = await aiReady;
   if(mine!==S){ busy=false; setBusy(); return; }
-  if(!ai){ d.parentNode.remove(); sys("Live AI is not available in this view. Use the demo from the start page."); busy=false; setBusy(); return; }
+  if(!ai){ d.parentNode.remove(); sys(t("no_live")); busy=false; setBusy(); return; }
   try{
     const r = await ai(novaPrompt(opening), {cache:false, onText:({text}) => { if(mine===S){ d.textContent = text; scroll(); } }});
     if(mine!==S){ busy=false; setBusy(); return; }
@@ -463,13 +728,13 @@ async function novaTurn(opening){
 }
 function speak(text){ if(ttsOn && tts) try{ tts.speak(text).catch(()=>{}); }catch(e){} }
 async function coach(i){
-  const mine = S, st = STAGES[i], t = S.topic;
+  const mine = S, st = STAGES[i], tp = S.topic;
   const stageMsgs = S.msgs.filter(m => m.stage===i && m.who==="me").map(m => m.text).join("\n---\n");
   if(!stageMsgs) return;
-  const prompt = `You support a university TEACHER who will make the final judgement. Collect evidence about the LEARNER's understanding from their own messages in stage "${st.name}" (Bloom level: ${st.bloom}) while they teach the topic "${t.title}" to an AI student.
+  const prompt = `You support a university EDUCATOR who reviews your feedback and keeps authority over assessment. Give evidence-linked formative feedback on the LEARNER's own messages in stage "${st.name}" (Bloom level: ${st.bloom}) while they teach the topic "${tp.title}" to an AI novice learner. Look at conceptual accuracy, teaching clarity and how the learner responds to the novice's confusion.
 Stage goal: ${st.goal}
-Teacher's key ideas (numbered from 0): ${JSON.stringify(t.keys)}
-Misconceptions the AI student holds: ${JSON.stringify(t.mis)}
+Educator's key ideas (numbered from 0): ${JSON.stringify(tp.keys)}
+Misconceptions the AI learner holds: ${JSON.stringify(tp.mis)}
 
 Judge conceptual understanding only. Do NOT penalise language, grammar, spelling, accent, informality or which language (Kazakh/Russian/English) is used. Do not reward length or confident tone.
 Levels: 0 ${LEVEL_DESC[0]}; 1 ${LEVEL_DESC[1]}; 2 ${LEVEL_DESC[2]}; 3 ${LEVEL_DESC[3]}; 4 ${LEVEL_DESC[4]}.
@@ -480,22 +745,22 @@ ${S.msgs.map(m => `[Stage ${m.stage+1}] ${m.who==="me"?"LEARNER":"NOVA"}: ${m.te
 Learner's messages in THIS stage:
 ${stageMsgs}
 
-Return JSON only:
+Return JSON only. Write "errors", "evidence" and "tip" in the language the learner used.
 {"covered":[{"i":index of a key idea the learner has correctly explained anywhere so far,"quote":"the learner's exact words that show it, max 20 words"}],
- "errors":[short descriptions of factual errors the learner made in this stage, empty if none],
+ "errors":[short descriptions of misconceptions or factual errors the learner showed in this stage, empty if none],
  "score":integer 0-4 for this stage,
- "evidence":"one sentence with a short exact quote from the learner that justifies the level",
- "tip":"one short, specific next step for the learner, in the learner's language, that does not reveal a key idea"}`;
+ "evidence":"one sentence with a short exact quote from the learner that supports the level",
+ "tip":"one short, specific next step for the learner that does not reveal a key idea"}`;
   try{
     const v = await askJSON(prompt, "quick");
     const r = {score:Math.max(0, Math.min(4, parseInt(v.score)||0)), errors:(v.errors||[]).map(String), evidence:String(v.evidence||""), tip:String(v.tip||"")};
-    (v.covered||[]).forEach(c => { const k = parseInt(c && c.i); if(k>=0 && k<t.keys.length && mine.covered[k]===undefined) mine.covered[k] = String(c.quote||""); });
+    (v.covered||[]).forEach(c => { const k = parseInt(c && c.i); if(k>=0 && k<tp.keys.length && mine.covered[k]===undefined) mine.covered[k] = String(c.quote||""); });
     mine.results[i] = r;
     if(mine===S && screen==="teach" && S.mode==="practice" && i===S.stage && r.tip){
       const tip = $("#tip"); tip.hidden = false;
-      tip.innerHTML = `<span class="ai">AI tip</span> ${esc(r.tip)}${r.errors.length?`<div class="small" style="color:var(--warn);margin-top:3px">Check: ${r.errors.map(esc).join("; ")}</div>`:""}`;
+      tip.innerHTML = `<span class="ai">${esc(t("ai_tip"))}</span> ${esc(r.tip)}${r.errors.length?`<div class="small" style="color:var(--warn);margin-top:3px">${esc(t("check"))}: ${r.errors.map(esc).join("; ")}</div>`:""}`;
     }
-  }catch(e){ /* evidence collection failing must not block the student */ }
+  }catch(e){ /* feedback failing must not block the student */ }
 }
 async function askJSON(prompt, tier){
   const ai = await aiReady; if(!ai) throw new Error("no ai");
@@ -505,9 +770,9 @@ async function askJSON(prompt, tier){
 }
 function aiError(e){
   const code = e && e.code;
-  if(code==="not_granted"){ sys("AI access was not allowed in this view."); setAI(null); }
-  else if(code==="rate_limited") sys("Too many requests. Wait a few seconds and send again.");
-  else sys("Nova could not answer (" + ((e&&e.message)||"error") + "). Try sending again.");
+  if(code==="not_granted"){ sys(t("err_grant")); setAI(null); }
+  else if(code==="rate_limited") sys(t("err_rate"));
+  else sys(t("err_other"));
 }
 $("#composer").addEventListener("submit", async ev => {
   ev.preventDefault();
@@ -518,19 +783,19 @@ $("#composer").addEventListener("submit", async ev => {
   const pf = pasted >= 40 ? Math.min(pasted, text.length) : 0; pasted = 0;
   bubble("me", text, pf);
   S.msgs.push({who:"me", text, stage:S.stage, at:Date.now(), pasted:pf});
-  renderStage();
+  renderTeachText();
   if(S.mode==="practice") S.pending.push(coach(S.stage));
   await novaTurn(false);
 });
 $("#inp").addEventListener("paste", e => { try{ pasted += (e.clipboardData.getData("text")||"").length; }catch(_){} });
 $("#inp").addEventListener("keydown", e => { if(e.key==="Enter" && !e.shiftKey){ e.preventDefault(); $("#composer").requestSubmit(); } });
 $("#inp").addEventListener("input", () => { if(!$("#inp").value) pasted = 0; autosize(); });
-function autosize(){ const t=$("#inp"); t.style.height="auto"; t.style.height=Math.min(t.scrollHeight,150)+"px"; }
+function autosize(){ const el=$("#inp"); el.style.height="auto"; el.style.height=Math.min(el.scrollHeight,150)+"px"; }
 function setBusy(){ $("#sendBtn").disabled = busy; }
 $("#nextBtn").addEventListener("click", () => {
   if(busy || !S || S.scripted) return;
   const i = S.stage;
-  if(!learnerCount(i)) S.results[i] = {score:0, errors:[], evidence:"Stage skipped by the student", tip:"", skipped:true};
+  if(!learnerCount(i)) S.results[i] = {score:0, errors:[], evidence:"", tip:"", skipped:true};
   else if(S.mode==="assessed" || !S.results[i]) S.pending.push(coach(i));
   $("#tip").hidden = true;
   if(i<4) enterStage(i+1, true); else finish();
@@ -541,73 +806,79 @@ $("#quitBtn").addEventListener("click", leave);
 let exPos = 0, playTimer = null;
 function exStep(){
   if(!S || !S.scripted) return false;
-  if(exPos >= EX.steps.length){ stopPlay(); finish(); return false; }
-  const st = EX.steps[exPos++];
+  const d = demoOf(S);
+  if(exPos >= d.steps.length){ stopPlay(); finish(); return false; }
+  const st = d.steps[exPos++];
   if(st.s !== S.stage) enterStage(st.s, false);
-  bubble(st.w, st.t);
-  S.msgs.push({who:st.w, text:st.t, stage:st.s, at:S.startedAt + exPos*42000});
-  if(st.coach){ S.results[st.s] = {score:st.coach.score, errors:st.coach.errors, evidence:st.coach.evidence, tip:st.coach.tip}; Object.keys(st.coach.covered).forEach(k => S.covered[k] = st.coach.covered[k]); }
-  if(st.w==="nova") speak(st.t);
-  $("#demoNext").textContent = exPos >= EX.steps.length ? "Finish" : "Next message";
+  if(st.skip){ S.results[st.s] = {score:0, errors:[], evidence:"", tip:"", skipped:true}; sys(t("skipped")); }
+  else{
+    bubble(st.w, st.t);
+    S.msgs.push({who:st.w, text:st.t, stage:st.s, at:S.startedAt + exPos*42000});
+    if(st.coach){ S.results[st.s] = {score:st.coach.score, errors:st.coach.errors, evidence:st.coach.evidence, tip:st.coach.tip}; Object.keys(st.coach.covered).forEach(k => S.covered[k] = st.coach.covered[k]); }
+    if(st.w==="nova") speak(st.t);
+  }
+  renderTeachText();
   return true;
 }
-function stopPlay(){ if(playTimer){ clearTimeout(playTimer); playTimer = null; } const b = $("#demoPlay"); if(b) b.textContent = "Play"; }
+function stopPlay(){ if(playTimer){ clearTimeout(playTimer); playTimer = null; } const b = $("#demoPlay"); if(b) b.textContent = t("play"); }
 function play(){
   if(playTimer){ stopPlay(); return; }
-  $("#demoPlay").textContent = "Pause";
-  const tick = () => { if(!S || !S.scripted || screen!=="teach"){ stopPlay(); return; }
-    const last = EX.steps[Math.max(0, exPos-1)]; const wait = Math.min(5200, 1100 + last.t.length*16);
-    playTimer = setTimeout(() => { if(exStep()) tick(); }, wait); };
+  const tick = () => { if(!S || !S.scripted || screen!=="teach" || role!=="student"){ stopPlay(); return; }
+    const d = demoOf(S), last = d.steps[Math.max(0, exPos-1)]; const wait = Math.min(5200, 1100 + ((last.t||"").length)*16);
+    playTimer = setTimeout(() => { playTimer = null; if(exStep()) tick(); }, wait); $("#demoPlay").textContent = t("pause"); };
   tick();
 }
 $("#demoPlay").addEventListener("click", play);
 $("#demoNext").addEventListener("click", () => { stopPlay(); exStep(); });
-$("#demoEnd").addEventListener("click", () => { stopPlay(); while(exPos < EX.steps.length) exStep(); finish(); });
+$("#demoEnd").addEventListener("click", () => { stopPlay(); const d = demoOf(S); while(exPos < d.steps.length) exStep(); finish(); });
 document.addEventListener("keydown", e => { if(e.key==="ArrowRight" && role==="student" && screen==="teach" && S && S.scripted){ e.preventDefault(); stopPlay(); exStep(); } });
 
-/* ---------- finish + result ---------- */
+/* ---------- finish + feedback ---------- */
 async function finish(){
   if(tts && !S.scripted) try{ tts.stop(); }catch(e){}
-  screen = "result"; S.waiting = !S.scripted && S.pending.length > 0; show();
-  if(S.scripted){ S.finishedAt = S.startedAt + EX.steps.length*42000; S.note = S.note || "I first said 10 steps in the Apply stage, then corrected myself. I hope the correction counts."; }
+  screen = "result"; S.waiting = !S.scripted && S.pending.length > 0; show(); window.scrollTo(0,0);
+  if(S.scripted){ const d = demoOf(S); S.finishedAt = S.startedAt + d.steps.length*42000; S.note = S.note || d.note; }
   else { await Promise.all(S.pending.map(p => Promise.resolve(p).catch(()=>{}))); S.finishedAt = Date.now(); }
   S.pending = []; S.waiting = false;
-  if(S.mode==="assessed"){ const c = Object.assign({}, S); delete c.pending; delete c.waiting; subs = subs.filter(x => x.id!==c.id); subs.unshift(c); subs = subs.slice(0,20); save("tb3_subs", subs); S = c; }
+  if(S.mode==="assessed"){ const c = Object.assign({}, S); delete c.pending; delete c.waiting; subs = subs.filter(x => x.id!==c.id); subs.unshift(c); subs = subs.slice(0,20); save("tb4_subs", subs); S = c; }
   if(screen==="result" && role==="student") renderResult();
 }
 function mins(s){ return Math.max(1, Math.round(((s.finishedAt||Date.now()) - s.startedAt)/60000)); }
-function stageRows(s, T){
+function evText(r){ return r.skipped ? esc(t("skipped")) : esc(r.evidence); }
+function stageRows(s){
   return STAGES.map((st,i) => { const r = s.results[i];
-    return `<div class="stagerow"><div><b style="font-weight:500">${st.name}</b></div>
-      <div>${r ? esc(r.evidence) : '<span class="muted">No notes</span>'}${r&&r.errors&&r.errors.length?`<div class="err">${r.errors.map(esc).join("; ")}</div>`:""}</div>
-      <div class="lv">${r ? `${LEVEL[r.score]} <span class="muted">${r.score}/4</span>` : ""}</div></div>`; }).join("");
+    return `<div class="stagerow"><div><b style="font-weight:500">${esc(t("st"+i))}</b></div>
+      <div>${r ? evText(r) : `<span class="muted">${esc(t("no_notes"))}</span>`}${r&&r.errors&&r.errors.length?`<div class="err">${r.errors.map(esc).join("; ")}</div>`:""}${r&&r.tip?`<div class="nextstep">${esc(t("next_step"))}: ${esc(r.tip)}</div>`:""}</div>
+      <div class="lv">${r ? `${esc(t("lv"+r.score))} <span class="muted">${r.score}/4</span>` : ""}</div></div>`; }).join("");
 }
 function keyList(s){
   const k = s.topic.keys; if(!k.length) return "";
-  return `<div class="keys">${k.map((x,i) => s.covered[i]!==undefined ? `<div><span>✓</span><span>${esc(x)}</span></div>` : `<div class="no"><span>–</span><span>${esc(x)} (not found)</span></div>`).join("")}</div>`;
+  return `<div class="keys">${k.map((x,i) => s.covered[i]!==undefined ? `<div><span>✓</span><span>${esc(x)}</span></div>` : `<div class="no"><span>–</span><span>${esc(x)} ${esc(t("not_found"))}</span></div>`).join("")}</div>`;
 }
 function renderResult(){
   const s = S, box = $("#resultBox"); if(!s){ screen="home"; return show(); }
-  if(s.waiting){ box.innerHTML = `<p class="muted"><span class="spin"></span> Collecting evidence from your explanation…</p>`; return; }
+  if(s.waiting){ box.innerHTML = `<p class="muted"><span class="spin"></span> ${esc(t("collecting"))}</p>`; return; }
   const T = s.teacher, practice = s.mode==="practice";
   const tot = [0,1,2,3,4].reduce((a,i) => a + (+T.scores[i]||0), 0);
+  const lab = `<div class="label">${s.scripted?esc(t("demo"))+" · ":practice?esc(t("practice_label"))+" · ":""}${esc(s.topic.title)}</div>`;
   let head;
-  if(practice) head = `<div><div class="label">Practice · ${esc(s.topic.title)}</div><h2>Practice finished. Nothing was sent.</h2></div>`;
-  else if(T.approved) head = `<div><div class="label">${s.scripted?"Demo · ":""}${esc(s.topic.title)}</div><div class="row" style="align-items:baseline"><span class="score">${tot}/20</span><span class="muted">set by your teacher</span></div>${T.comment?`<p style="margin-top:8px">“${esc(T.comment)}”</p>`:""}</div>`;
-  else head = `<div><div class="label">${s.scripted?"Demo · ":""}${esc(s.topic.title)}</div><h2>Sent to your teacher.</h2><p class="muted" style="margin-top:6px">Your teacher reads the conversation and decides the score. The notes below are suggestions from the AI, not your score.</p></div>`;
-  const after = `<div class="stack" style="gap:8px"><span class="small muted">Now that you have taught it, how well do you understand it? ${s.pre?`Before, you said ${s.pre} of 5.`:""}</span><div class="scale" id="postScale">${scaleHTML(s.post)}</div>${s.pre&&s.post&&s.post<s.pre?`<span class="small muted">Lower than before. That is normal: explaining shows gaps that reading hides.</span>`:""}</div>`;
-  const notes = `<div class="panel stack"><div class="row"><span class="label grow">${s.scripted?"Evidence notes (scripted for the demo)":"Evidence notes"}</span>${s.scripted?"":'<span class="ai">AI · suggestion</span>'}</div><div>${stageRows(s)}</div><hr><div class="label">Key ideas set by the teacher</div>${keyList(s)}</div>`;
-  const voice = (!practice && !T.approved) ? `<div class="stack" style="gap:8px"><label class="f" for="stuNote" style="margin:0">Note for your teacher (optional)</label><textarea id="stuNote" rows="2" placeholder="Anything the teacher should know">${esc(s.note)}</textarea><label class="row small"><input type="checkbox" id="stuOral" ${s.oral?"checked":""}> I would like a live oral with my teacher instead</label></div>` : "";
-  const next = `<div class="row">${s.scripted && !T.approved ? '<button class="btn primary big" id="toTeacher">See the teacher\'s side</button>' : ""}<button class="btn" id="resHome">Back to start</button></div>`;
-  box.innerHTML = head + after + notes + voice + next + `<details><summary>Full conversation</summary><div class="transcript">${esc(transcript(s))}</div></details>`;
-  $("#postScale").addEventListener("click", e => { const b = e.target.closest("button"); if(!b) return; s.post = +b.dataset.n; save("tb3_subs", subs); renderResult(); });
+  if(practice) head = `<div>${lab}<h2>${esc(t("res_practice_h"))}</h2></div>`;
+  else if(T.approved) head = `<div>${lab}<div class="row" style="align-items:baseline"><span class="score">${tot}/20</span><span class="muted">${esc(t("res_score_by"))}</span></div>${T.comment?`<p style="margin-top:8px">“${esc(T.comment)}”</p>`:""}</div>`;
+  else head = `<div>${lab}<h2>${esc(t("res_sent_h"))}</h2><p class="muted" style="margin-top:6px">${esc(t("res_sent_p"))}</p></div>`;
+  const after = `<div class="stack" style="gap:8px"><span class="small muted">${esc(t("rate_post"))} ${s.pre?esc(t("rate_before", s.pre)):""}</span><div class="scale" id="postScale">${scaleHTML(s.post)}</div>${s.pre&&s.post&&s.post<s.pre?`<span class="small muted">${esc(t("rate_lower"))}</span>`:""}</div>`;
+  const notes = `<div class="panel stack"><div class="row"><span class="label grow">${esc(t(s.scripted?"ev_label_demo":"ev_label"))}</span>${s.scripted?"":`<span class="ai">${esc(t("ai_sugg"))}</span>`}</div><div>${stageRows(s)}</div><hr><div class="label">${esc(t("keys_label"))}</div>${keyList(s)}</div>`;
+  const voice = (!practice && !T.approved) ? `<div class="stack" style="gap:8px"><label class="f" for="stuNote" style="margin:0">${esc(t("note_label"))}</label><textarea id="stuNote" rows="2" placeholder="${esc(t("note_ph"))}">${esc(s.note)}</textarea><label class="row small"><input type="checkbox" id="stuOral" ${s.oral?"checked":""}> ${esc(t("oral"))}</label></div>` : "";
+  const next = `<div class="row">${s.scripted && !T.approved ? `<button class="btn primary big" id="toTeacher">${esc(t("to_teacher"))}</button>` : ""}<button class="btn" id="resAgain">${esc(t("again"))}</button><button class="btn" id="resHome">${esc(t("home"))}</button></div>`;
+  box.innerHTML = head + after + notes + voice + next + `<details><summary>${esc(t("full_conv"))}</summary><div class="transcript">${esc(transcript(s))}</div></details>`;
+  $("#postScale").addEventListener("click", e => { const b = e.target.closest("button"); if(!b) return; s.post = +b.dataset.n; save("tb4_subs", subs); renderResult(); });
   $("#resHome").addEventListener("click", leave);
-  const n = $("#stuNote"); if(n) n.addEventListener("input", e => { s.note = e.target.value; save("tb3_subs", subs); });
-  const o = $("#stuOral"); if(o) o.addEventListener("change", e => { s.oral = e.target.checked; save("tb3_subs", subs); });
+  $("#resAgain").addEventListener("click", () => { const d = s.scripted ? demoOf(s) : null; openTopic(d ? d.topic : s.topic, d); });
+  const n = $("#stuNote"); if(n) n.addEventListener("input", e => { s.note = e.target.value; save("tb4_subs", subs); });
+  const o = $("#stuOral"); if(o) o.addEventListener("change", e => { s.oral = e.target.checked; save("tb4_subs", subs); });
   const tt = $("#toTeacher"); if(tt) tt.addEventListener("click", () => { reviewId = s.id; role = "teacher"; tTab = "review"; show(); window.scrollTo(0,0); });
 }
 
-/* ---------- teacher ---------- */
+/* ---------- educator ---------- */
 $("#tabReview").addEventListener("click", () => { tTab = "review"; renderTeacher(); });
 $("#tabTopics").addEventListener("click", () => { tTab = "topics"; renderTeacher(); });
 function renderTeacher(){
@@ -615,61 +886,61 @@ function renderTeacher(){
   $("#reviewPane").hidden = tTab!=="review"; $("#topicsPane").hidden = tTab!=="topics";
   if(tTab==="topics") return renderSetup();
   if(!subs.find(x => x.id===reviewId)) reviewId = subs[0] ? subs[0].id : null;
-  $("#subList").innerHTML = subs.length > 1 ? subs.map(x => `<button class="sub" data-id="${esc(x.id)}" aria-current="${x.id===reviewId}"><b style="font-weight:500">${esc(x.topic.title)}</b><span>${x.scripted?"demo":new Date(x.finishedAt).toLocaleDateString()} · ${x.teacher.approved?"approved":"to review"}${x.oral?" · oral requested":""}</span></button>`).join("") : "";
-  $$(".sub").forEach(b => b.addEventListener("click", () => { reviewId = b.dataset.id; renderTeacher(); }));
+  $("#subList").innerHTML = subs.length > 1 ? subs.map(x => `<button class="sub" data-sub="${esc(x.id)}" aria-current="${x.id===reviewId}"><b style="font-weight:500">${esc(x.topic.title)}</b><span>${x.scripted?esc(t("demo")):new Date(x.finishedAt).toLocaleDateString()} · ${esc(t(x.teacher.approved?"approved":"to_review"))}${x.oral?" · "+esc(t("oral_req")):""}</span></button>`).join("") : "";
+  $$("[data-sub]").forEach(b => b.addEventListener("click", () => { reviewId = b.dataset.sub; renderTeacher(); }));
   renderReview();
 }
 function renderReview(){
   const s = subs.find(x => x.id===reviewId), box = $("#reviewBox");
-  if(!s){ box.innerHTML = `<p class="muted">Nothing to review yet. Finish a teach-back on the student side, or watch the demo first.</p>`; return; }
+  if(!s){ box.innerHTML = `<p class="muted">${esc(t("t_empty"))}</p>`; return; }
   const T = s.teacher, me = s.msgs.filter(m => m.who==="me"), pf = me.filter(m => m.pasted).length;
   const done = [0,1,2,3,4].every(i => T.scores[i]!==undefined);
   const tot = [0,1,2,3,4].reduce((a,i) => a + (+T.scores[i]||0), 0);
   const agree = [0,1,2,3,4].filter(i => s.results[i] && T.scores[i]===s.results[i].score).length;
   const rows = STAGES.map((st,i) => { const r = s.results[i], tv = T.scores[i], reveal = !blind || tv!==undefined;
-    return `<div class="stagerow"><div><b style="font-weight:500">${st.name}</b><div class="small muted">${r ? (reveal ? `suggested ${r.score}/4` : "suggestion hidden") : "no notes"}</div></div>
-      <div>${r ? esc(r.evidence) : '<span class="muted">No evidence collected</span>'}${r&&r.errors&&r.errors.length?`<div class="err">${r.errors.map(esc).join("; ")}</div>`:""}</div>
-      <div><select data-i="${i}" aria-label="Your score for ${st.name}"><option value="">Score</option>${[0,1,2,3,4].map(n => `<option value="${n}" ${tv===n?"selected":""}>${n} · ${LEVEL[n]}</option>`).join("")}</select></div></div>`; }).join("");
+    return `<div class="stagerow"><div><b style="font-weight:500">${esc(t("st"+i))}</b><div class="small muted">${r ? (reveal ? esc(t("t_sugg", r.score)) : esc(t("t_hidden"))) : esc(t("no_notes"))}</div></div>
+      <div>${r ? evText(r) : `<span class="muted">${esc(t("no_notes"))}</span>`}${r&&r.errors&&r.errors.length?`<div class="err">${r.errors.map(esc).join("; ")}</div>`:""}</div>
+      <div><select data-i="${i}" aria-label="${esc(t("t_score"))}: ${esc(t("st"+i))}"><option value="">${esc(t("t_score"))}</option>${[0,1,2,3,4].map(n => `<option value="${n}" ${tv===n?"selected":""}>${n} · ${esc(t("lv"+n))}</option>`).join("")}</select></div></div>`; }).join("");
   box.innerHTML = `
-    <div><div class="label">${s.scripted?"Demo · scripted example":"Teach-back"}</div><h2>${esc(s.topic.title)}</h2>
-      <p class="muted" style="margin-top:6px">${mins(s)} min · ${me.length} student messages · own rating ${s.pre||"–"} → ${s.post||"–"} of 5 · ${pf ? pf+" with pasted text" : "no pasted text"}</p></div>
-    ${s.oral?`<p><b style="font-weight:500">The student asked for a live oral instead.</b> Use this record as preparation.</p>`:""}
-    ${s.note?`<p>Student's note: “${esc(s.note)}”</p>`:""}
+    <div><div class="label">${esc(t(s.scripted?"t_demo":"t_live"))}</div><h2>${esc(s.topic.title)}</h2>
+      <p class="muted" style="margin-top:6px">${esc(t("t_meta", mins(s), me.length, s.pre||"–", s.post||"–", pf ? t("t_paste_some", pf) : t("t_paste_none")))}</p></div>
+    ${s.oral?`<p><b style="font-weight:500">${esc(t("t_oral"))}</b></p>`:""}
+    ${s.note?`<p>${esc(t("t_note"))} “${esc(s.note)}”</p>`:""}
     <div class="panel stack">
-      <div class="row"><span class="label grow">Score each stage</span><label class="row small muted"><input type="checkbox" id="blind" ${blind?"checked":""}> Hide AI suggestions until I score</label></div>
+      <div class="row"><span class="label grow">${esc(t("t_score_each"))}</span><label class="row small muted"><input type="checkbox" id="blind" ${blind?"checked":""}> ${esc(t("t_blind"))}</label></div>
       <div>${rows}</div>
-      <p class="small muted">${s.scripted?"In the demo the quotes and suggested levels are scripted.":"Quotes and suggested levels come from the AI."} Read the conversation before you agree with them.</p>
-      <div><label class="f" for="tComment">Feedback to the student</label><textarea id="tComment" rows="2" placeholder="For example: strong correction of Nova; revisit how you estimate the number of steps.">${esc(T.comment)}</textarea></div>
-      <div class="row"><span class="score">${tot}/20</span><span class="muted grow">${T.approved ? `Approved and released. You matched the suggestion on ${agree} of 5 stages.` : done ? "Nothing reaches the student until you approve." : "Score all five stages to approve."}</span>
-        <button class="btn primary" id="approve" ${done?"":"disabled"}>${T.approved?"Update":"Approve and release"}</button></div>
+      <p class="small muted">${esc(t(s.scripted?"t_src_demo":"t_src_ai"))} ${esc(t("t_read"))}</p>
+      <div><label class="f" for="tComment">${esc(t("t_fb"))}</label><textarea id="tComment" rows="2" placeholder="${esc(t("t_fb_ph"))}">${esc(T.comment)}</textarea></div>
+      <div class="row"><span class="score">${tot}/20</span><span class="muted grow">${esc(T.approved ? t("t_approved", agree) : done ? t("t_ready") : t("t_need"))}</span>
+        <button class="btn primary" id="approve" ${done?"":"disabled"}>${esc(t(T.approved?"t_update":"t_approve"))}</button></div>
     </div>
-    <details ${s.scripted?"":"open"}><summary>Full conversation</summary><div class="transcript">${esc(transcript(s))}</div></details>
-    <details><summary>Key ideas and where they were found</summary>${s.topic.keys.map((x,i) => `<p style="margin:6px 0">${s.covered[i]!==undefined?"✓":"–"} ${esc(x)}${s.covered[i]?` <span class="muted">“${esc(s.covered[i])}”</span>`:""}</p>`).join("")}</details>`;
-  box.querySelectorAll("select[data-i]").forEach(sel => sel.addEventListener("change", () => { if(sel.value==="") delete T.scores[+sel.dataset.i]; else T.scores[+sel.dataset.i] = +sel.value; T.approved = false; save("tb3_subs", subs); renderReview(); }));
+    <details ${s.scripted?"":"open"}><summary>${esc(t("full_conv"))}</summary><div class="transcript">${esc(transcript(s))}</div></details>
+    <details><summary>${esc(t("t_keys"))}</summary>${s.topic.keys.map((x,i) => `<p style="margin:6px 0">${s.covered[i]!==undefined?"✓":"–"} ${esc(x)}${s.covered[i]?` <span class="muted">“${esc(s.covered[i])}”</span>`:""}</p>`).join("")}</details>`;
+  box.querySelectorAll("select[data-i]").forEach(sel => sel.addEventListener("change", () => { if(sel.value==="") delete T.scores[+sel.dataset.i]; else T.scores[+sel.dataset.i] = +sel.value; T.approved = false; save("tb4_subs", subs); renderReview(); }));
   $("#blind").addEventListener("change", e => { blind = e.target.checked; renderReview(); });
-  $("#tComment").addEventListener("input", e => { T.comment = e.target.value; save("tb3_subs", subs); });
-  $("#approve").addEventListener("click", () => { T.approved = true; T.approvedAt = Date.now(); save("tb3_subs", subs); if(S && S.id===s.id) S = s; renderReview(); });
+  $("#tComment").addEventListener("input", e => { T.comment = e.target.value; save("tb4_subs", subs); });
+  $("#approve").addEventListener("click", () => { T.approved = true; T.approvedAt = Date.now(); save("tb4_subs", subs); if(S && S.id===s.id) S = s; renderReview(); });
 }
 
 /* ---------- topic setup ---------- */
 let editId = null;
 function renderSetup(){
-  if(!topics.find(t => t.id===editId)) editId = topics[0] && topics[0].id;
-  $("#setSel").innerHTML = topics.map(t => `<option value="${esc(t.id)}" ${t.id===editId?"selected":""}>${esc(t.title)}</option>`).join("");
-  const t = topics.find(x => x.id===editId) || {title:"",course:"",mat:[],keys:[],mis:[],scen:""};
-  $("#setTitle").value = t.title; $("#setCourse").value = t.course||""; $("#setMat").value = (t.mat||[]).join("\n"); $("#setKeys").value = t.keys.join("\n"); $("#setMis").value = t.mis.join("\n"); $("#setScen").value = t.scen||"";
+  if(!topics.find(x => x.id===editId)) editId = topics[0] && topics[0].id;
+  $("#setSel").innerHTML = topics.map(x => `<option value="${esc(x.id)}" ${x.id===editId?"selected":""}>${esc(x.title)}</option>`).join("");
+  const tp = topics.find(x => x.id===editId) || {title:"",course:"",mat:[],keys:[],mis:[],scen:""};
+  $("#setTitle").value = tp.title; $("#setCourse").value = tp.course||""; $("#setMat").value = (tp.mat||[]).join("\n"); $("#setKeys").value = tp.keys.join("\n"); $("#setMis").value = tp.mis.join("\n"); $("#setScen").value = tp.scen||"";
   $("#saveMsg").textContent = "";
 }
 $("#setSel").addEventListener("change", e => { editId = e.target.value; renderSetup(); });
 $("#saveTopic").addEventListener("click", () => {
-  const lines = s => s.split("\n").map(x => x.trim()).filter(Boolean);
-  const t = topics.find(x => x.id===editId); if(!t) return;
-  t.title = $("#setTitle").value.trim()||"Untitled"; t.course = $("#setCourse").value.trim(); t.mat = lines($("#setMat").value); t.keys = lines($("#setKeys").value); t.mis = lines($("#setMis").value); t.scen = $("#setScen").value.trim();
-  save("tb3_topics", topics); renderSetup(); $("#saveMsg").textContent = "Saved";
+  const lines = v => v.split("\n").map(x => x.trim()).filter(Boolean);
+  const tp = topics.find(x => x.id===editId); if(!tp) return;
+  tp.title = $("#setTitle").value.trim()||"Untitled"; tp.course = $("#setCourse").value.trim(); tp.mat = lines($("#setMat").value); tp.keys = lines($("#setKeys").value); tp.mis = lines($("#setMis").value); tp.scen = $("#setScen").value.trim();
+  save("tb3_topics", topics); renderSetup(); $("#saveMsg").textContent = t("saved");
 });
 $("#newTopic").addEventListener("click", () => {
-  const t = {id:"t"+Date.now(), title:"New topic", course:"", mat:[], keys:[], mis:[], scen:""};
-  topics.push(t); editId = t.id; save("tb3_topics", topics); renderSetup(); $("#setTitle").focus();
+  const tp = {id:"t"+Date.now(), title:t("new_topic"), course:"", mat:[], keys:[], mis:[], scen:""};
+  topics.push(tp); editId = tp.id; save("tb3_topics", topics); renderSetup(); $("#setTitle").focus();
 });
 
 /* ---------- voice ---------- */
@@ -681,16 +952,18 @@ $("#micBtn").addEventListener("click", () => {
   dict.start().catch(e => { if(e && e.code==="not_granted") $("#micBtn").hidden = true; });
 });
 $("#ttsBtn").addEventListener("click", () => {
-  ttsOn = !ttsOn; $("#ttsBtn").textContent = "Read Nova aloud: " + (ttsOn ? "on" : "off"); $("#ttsBtn").setAttribute("aria-pressed", ttsOn);
+  ttsOn = !ttsOn; $("#ttsBtn").textContent = t(ttsOn ? "tts_on" : "tts_off"); $("#ttsBtn").setAttribute("aria-pressed", ttsOn);
   if(!ttsOn && tts) try{ tts.stop(); }catch(e){}
 });
 
 /* ---------- capabilities ---------- */
-function setAI(s){
-  sample = s; aiKnown = true; aiResolve(s);
+function setStatus(){
   const b = $("#aiStatus");
-  b.className = "dot sp" + (s ? " live" : "");
-  b.lastElementChild.textContent = s ? "Live AI ready" : "Demo only";
+  b.className = "dot sp" + (sample ? " live" : "");
+  b.lastElementChild.textContent = t(!aiKnown ? "ai_conn" : sample ? "ai_live" : "ai_demo");
+}
+function setAI(s){
+  sample = s; aiKnown = true; aiResolve(s); setStatus();
   if(role==="student" && screen==="home") renderHome();
 }
 show(); setBusy();
@@ -700,11 +973,11 @@ let tries = 0;
   window.claude.use("sample").then(s => setAI(s || null)).catch(() => setAI(null));
   window.claude.use("dictation").then(d => {
     if(!d) return; dict = d; $("#micBtn").hidden = false;
-    d.onState(({state}) => { listening = state==="listening"; $("#micBtn").classList.toggle("on", listening); $("#micBtn").title = listening ? "Stop listening" : "Speak instead of typing"; });
+    d.onState(({state}) => { listening = state==="listening"; $("#micBtn").classList.toggle("on", listening); $("#micBtn").title = t(listening ? "mic_on" : "mic_off"); });
     d.onPartial(({text}) => { $("#inp").value = baseText + text; autosize(); });
     d.onFinal(({text}) => { baseText = baseText + text + " "; $("#inp").value = baseText; autosize(); });
   }).catch(()=>{});
-  window.claude.use("tts").then(t => { if(!t) return; tts = t; if(screen==="teach") $("#ttsBtn").hidden = false; }).catch(()=>{});
+  window.claude.use("tts").then(x => { if(!x) return; tts = x; if(screen==="teach") $("#ttsBtn").hidden = false; }).catch(()=>{});
 })();
 })();
 </script>
